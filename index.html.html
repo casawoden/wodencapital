@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Woden Capital — Asesor Financiero</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════
+   DESIGN SYSTEM
+   ═══════════════════════════════ */
+:root {
+  --ink:#080808;--ink2:#0f0f0f;--ink3:#161616;--ink4:#1e1e1e;--ink5:#282828;--ink6:#333;
+  --smoke:#F5F1EB;--smoke2:#DDD8CF;--smoke3:#AAA49A;--smoke4:#6E6760;--smoke5:#3E3A35;
+  --au:#C4A24E;--au2:#D9BA6E;--au3:#8B7030;--au4:rgba(196,162,78,.13);--au5:rgba(196,162,78,.06);
+  --gr:#3E9E6A;--gr2:rgba(62,158,106,.13);
+  --cr:#B84040;--cr2:rgba(184,64,64,.13);
+  --sa:#3A6EBE;--sa2:rgba(58,110,190,.13);
+  --am:#B87828;--am2:rgba(184,120,40,.13);
+  --pu:#7B4EB8;--pu2:rgba(123,78,184,.13);
+  --bd:rgba(196,162,78,.12);--bd2:rgba(245,241,235,.06);
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Outfit',sans-serif;
+  --r:2px;--r2:4px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--ink);color:var(--smoke);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");opacity:.35}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--ink2)}
+::-webkit-scrollbar-thumb{background:var(--au3);border-radius:2px}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:230px;min-width:230px;background:var(--ink2);border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;transition:transform .3s}
+.main{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.s-logo{padding:1.6rem 1.4rem 1.2rem;border-bottom:1px solid var(--bd)}
+.s-logo-mark{font-family:var(--serif);font-size:1.25rem;font-weight:600;color:var(--au2);letter-spacing:.07em;text-transform:uppercase}
+.s-logo-sub{font-family:var(--mono);font-size:.55rem;color:var(--smoke4);letter-spacing:.2em;text-transform:uppercase;margin-top:.25rem}
+
+.s-rates{padding:.85rem 1.2rem;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:.38rem}
+.s-rate-row{display:flex;justify-content:space-between;align-items:center}
+.s-rate-label{font-family:var(--mono);font-size:.58rem;color:var(--smoke4);letter-spacing:.08em;text-transform:uppercase}
+.s-rate-val{font-family:var(--mono);font-size:.7rem;font-weight:500;color:var(--au2)}
+.s-rate-val.up{color:var(--gr)}.s-rate-val.down{color:var(--cr)}.s-rate-val.dim{color:var(--smoke5)}
+
+.s-nav{flex:1;padding:.6rem 0;overflow-y:auto;scrollbar-width:none}
+.s-nav::-webkit-scrollbar{display:none}
+.s-section{font-family:var(--mono);font-size:.53rem;color:var(--smoke5);letter-spacing:.2em;text-transform:uppercase;padding:.75rem 1.4rem .35rem}
+.nav-item{display:flex;align-items:center;gap:.65rem;padding:.55rem 1.4rem;cursor:pointer;
+  transition:all .15s;border-left:2px solid transparent;color:var(--smoke3);font-size:.78rem;font-weight:500}
+.nav-item:hover{background:var(--au5);color:var(--au2)}
+.nav-item.active{background:var(--au4);border-left-color:var(--au);color:var(--au2)}
+.nav-icon{font-size:.82rem;width:16px;text-align:center;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--cr);color:#fff;font-family:var(--mono);font-size:.52rem;padding:.1rem .35rem;border-radius:20px}
+
+.s-footer{padding:.9rem 1.4rem;border-top:1px solid var(--bd)}
+.s-refresh{display:flex;align-items:center;gap:.4rem;cursor:pointer;transition:color .2s;font-family:var(--mono);font-size:.57rem;color:var(--smoke5)}
+.s-refresh:hover{color:var(--au)}
+.s-refresh-dot{width:6px;height:6px;border-radius:50%;background:var(--gr);flex-shrink:0;animation:pdot 2s infinite}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+/* ── TICKER BAR ── */
+.ticker-bar{background:var(--ink2);border-bottom:1px solid var(--bd);padding:.55rem 2rem;
+  display:flex;align-items:center;gap:1.5rem;overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.ticker-bar::-webkit-scrollbar{display:none}
+.ticker-item{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+.ticker-name{font-family:var(--mono);font-size:.58rem;color:var(--smoke4);letter-spacing:.08em;text-transform:uppercase}
+.ticker-price{font-family:var(--mono);font-size:.72rem;font-weight:500;color:var(--smoke)}
+.ticker-chg{font-family:var(--mono);font-size:.6rem;padding:.05rem .3rem;border-radius:2px}
+.ticker-chg.up{color:var(--gr);background:var(--gr2)}.ticker-chg.down{color:var(--cr);background:var(--cr2)}
+.ticker-sep{color:var(--smoke5);font-size:.65rem;flex-shrink:0}
+
+/* ── PAGE HEADER ── */
+.page-header{padding:1.3rem 2rem 1rem;border-bottom:1px solid var(--bd2);display:flex;
+  align-items:flex-end;justify-content:space-between;position:sticky;top:0;
+  background:rgba(8,8,8,.96);backdrop-filter:blur(12px);z-index:50;flex-shrink:0}
+.page-eyebrow{font-family:var(--mono);font-size:.58rem;color:var(--smoke4);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.2rem}
+.page-title{font-family:var(--serif);font-size:1.6rem;font-weight:600;color:var(--smoke);line-height:1}
+.page-meta{font-family:var(--mono);font-size:.63rem;color:var(--smoke4);text-align:right;line-height:1.6}
+.mobile-btn{display:none;align-items:center;justify-content:center;width:34px;height:34px;
+  background:var(--ink4);border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;color:var(--smoke3);font-size:.9rem}
+
+.content{padding:1.8rem 2rem;flex:1}
+.panel{display:none;animation:fadeIn .2s ease}.panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.card{background:var(--ink3);border:1px solid var(--bd);border-radius:var(--r2);padding:1.3rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--au),transparent);opacity:.25}
+.card-sm{padding:.9rem 1.1rem}.card-lg{padding:1.7rem}
+.eyebrow{font-family:var(--mono);font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;color:var(--smoke4);margin-bottom:.6rem}
+.big-val{font-family:var(--serif);font-size:2.1rem;font-weight:700;color:var(--au2);line-height:1;margin-bottom:.2rem}
+.big-val.vg{font-size:2.6rem}.big-val.sm{font-size:1.3rem;font-family:var(--mono)}
+.big-val.green{color:var(--gr)}.big-val.red{color:var(--cr)}.big-val.blue{color:var(--sa)}
+.big-val.white{color:var(--smoke)}.big-val.amber{color:var(--am)}
+.caption{font-size:.73rem;color:var(--smoke4);line-height:1.4}
+.sep{height:1px;background:var(--bd2);margin:1rem 0}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:.8rem}
+.gcol{display:grid;grid-template-columns:1fr 360px;gap:1.4rem}
+.gcol-r{display:grid;grid-template-columns:360px 1fr;gap:1.4rem}
+.mb1{margin-bottom:.5rem}.mb2{margin-bottom:1rem}.mb3{margin-bottom:1.5rem}.mb4{margin-bottom:2rem}
+.mt1{margin-top:.5rem}.mt2{margin-top:1rem}
+.span2{grid-column:span 2}
+
+/* ── FORMS ── */
+.field{margin-bottom:.9rem}
+.flabel{font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;text-transform:uppercase;color:var(--au3);display:block;margin-bottom:.35rem}
+.fhint{font-size:.68rem;color:var(--smoke5);margin-top:.2rem}
+.pfx-wrap{position:relative;display:flex;align-items:center}
+.pfx{position:absolute;left:.85rem;font-family:var(--mono);font-size:.8rem;color:var(--smoke4);pointer-events:none;z-index:1}
+.pfx-wrap input{padding-left:2rem}
+input[type=number],input[type=text],textarea,select{width:100%;background:var(--ink4);border:1px solid var(--bd);
+  color:var(--smoke);padding:.62rem .85rem;font-family:var(--mono);font-size:.82rem;border-radius:var(--r);
+  outline:none;transition:border-color .2s;-moz-appearance:textfield;appearance:none}
+input:focus,textarea:focus,select:focus{border-color:var(--au);background:var(--ink5)}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none}
+textarea{resize:vertical;min-height:80px;line-height:1.5;font-size:.8rem}
+select option{background:var(--ink4)}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:var(--ink5);border-radius:2px;outline:none;padding:0;border:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--au);cursor:pointer;border:2px solid var(--ink);box-shadow:0 0 0 2px var(--au3)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;padding:.65rem 1.3rem;
+  font-family:var(--sans);font-size:.77rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  border:none;border-radius:var(--r);cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-p{background:var(--au);color:var(--ink)}.btn-p:hover{background:var(--au2);transform:translateY(-1px);box-shadow:0 4px 18px rgba(196,162,78,.3)}
+.btn-s{background:transparent;color:var(--au);border:1px solid var(--au3)}.btn-s:hover{background:var(--au4);border-color:var(--au)}
+.btn-g{background:transparent;color:var(--smoke3);border:1px solid var(--bd)}.btn-g:hover{color:var(--smoke);border-color:var(--bd2)}
+.btn-d{background:var(--cr2);color:var(--cr);border:1px solid rgba(184,64,64,.3)}.btn-d:hover{background:rgba(184,64,64,.22)}
+.btn-full{width:100%}.btn-sm{padding:.4rem .8rem;font-size:.68rem}.btn-lg{padding:.85rem 1.8rem;font-size:.82rem}
+.btn:disabled{opacity:.38;cursor:not-allowed;transform:none}
+
+/* ── ALERTS ── */
+.alert{padding:.8rem 1.05rem;border-radius:var(--r);font-size:.78rem;line-height:1.6;border-left:3px solid;margin:.7rem 0}
+.al-d{background:var(--cr2);border-color:var(--cr);color:#f0a0a0}
+.al-w{background:var(--am2);border-color:var(--am);color:#f0c080}
+.al-s{background:var(--gr2);border-color:var(--gr);color:#80e0b0}
+.al-i{background:var(--sa2);border-color:var(--sa);color:#a0c0f0}
+.al-g{background:var(--au4);border-color:var(--au);color:var(--au2)}
+.alert strong{font-weight:600}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:.18rem .5rem;border-radius:20px;
+  font-family:var(--mono);font-size:.58rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.b-lo{background:var(--gr2);color:var(--gr)}.b-me{background:var(--am2);color:var(--am)}
+.b-hi{background:var(--cr2);color:var(--cr)}.b-au{background:var(--au4);color:var(--au2)}
+.b-bl{background:var(--sa2);color:var(--sa)}.b-pu{background:var(--pu2);color:var(--pu)}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse;font-size:.78rem}
+.tbl th{font-family:var(--mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--smoke4);padding:.55rem .75rem;border-bottom:1px solid var(--bd);text-align:left;font-weight:400}
+.tbl td{padding:.65rem .75rem;border-bottom:1px solid var(--bd2);vertical-align:middle;color:var(--smoke2)}
+.tbl tr:last-child td{border-bottom:none}.tbl tr:hover td{background:var(--au5)}
+.tbl .mono{font-family:var(--mono);font-size:.75rem}
+.tbl .green{color:var(--gr)}.tbl .red{color:var(--cr)}.tbl .gold{color:var(--au2)}.tbl .muted{color:var(--smoke4)}
+
+/* ── BAR CHART ── */
+.bar-chart{display:flex;flex-direction:column;gap:.65rem}
+.bar-row{display:grid;grid-template-columns:155px 1fr 105px;align-items:center;gap:.75rem}
+.bar-row.narrow{grid-template-columns:120px 1fr 90px}
+.bar-label{font-size:.73rem;color:var(--smoke3);line-height:1.2}
+.bar-track{height:5px;background:var(--ink5);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.22,1,.36,1)}
+.bar-amt{font-family:var(--mono);font-size:.7rem;color:var(--au);text-align:right}
+.bar-amt.green{color:var(--gr)}.bar-amt.red{color:var(--cr)}.bar-amt.blue{color:var(--sa)}
+
+/* ── PNL ROWS ── */
+.prow{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--bd2)}
+.prow:last-child{border-bottom:none}
+.prow.total{border-top:1px solid var(--bd);border-bottom:none;padding-top:.75rem;margin-top:.3rem}
+.pkey{font-size:.78rem;color:var(--smoke3)}.pkey.indent{padding-left:.9rem;color:var(--smoke4);font-size:.73rem}
+.pkey.bold{color:var(--smoke);font-weight:600}
+.pval{font-family:var(--mono);font-size:.8rem;color:var(--smoke2)}
+.pval.green{color:var(--gr)}.pval.red{color:var(--cr)}.pval.gold{color:var(--au2)}.pval.bold{font-size:.9rem;font-weight:700}
+
+/* ── MKT CARDS ── */
+.mkt-card{background:var(--ink3);border:1px solid var(--bd);border-radius:var(--r2);padding:.95rem 1.1rem;
+  display:flex;align-items:center;justify-content:space-between}
+.mkt-name{font-family:var(--mono);font-size:.57rem;color:var(--smoke4);letter-spacing:.09em;text-transform:uppercase;margin-bottom:.22rem}
+.mkt-price{font-family:var(--mono);font-size:1rem;font-weight:500;color:var(--smoke);margin-bottom:.12rem}
+.mkt-sub{font-size:.67rem;color:var(--smoke4)}
+.mkt-pct{font-family:var(--mono);font-size:.72rem;padding:.18rem .45rem;border-radius:3px;display:inline-block}
+.mkt-pct.up{color:var(--gr);background:var(--gr2)}.mkt-pct.down{color:var(--cr);background:var(--cr2)}.mkt-pct.na{color:var(--smoke4);background:var(--ink5)}
+
+/* ── DONUT ── */
+.donut-wrap{position:relative;flex-shrink:0}
+.donut-wrap svg{transform:rotate(-90deg)}
+.donut-bg{fill:none;stroke:var(--ink5);stroke-width:9}
+.donut-fill{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dasharray .7s ease}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+
+/* ── CHAT ── */
+.chat-box{display:flex;flex-direction:column;height:calc(100vh - 210px);min-height:500px}
+.chat-msgs{flex:1;overflow-y:auto;padding:1rem 0;display:flex;flex-direction:column;gap:.9rem}
+.msg{display:flex;gap:.8rem;align-items:flex-start;animation:fadeIn .2s ease}
+.msg-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0;margin-top:.1rem}
+.msg-av.ai{background:var(--au4);border:1px solid var(--au3);color:var(--au2);font-family:var(--serif);letter-spacing:.04em}
+.msg-av.user{background:var(--ink5);border:1px solid var(--bd);color:var(--smoke3)}
+.msg-body{flex:1}
+.msg-role{font-family:var(--mono);font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--smoke4);margin-bottom:.3rem}
+.msg-text{font-size:.82rem;line-height:1.75;color:var(--smoke2)}
+.msg-text p{margin-bottom:.5rem}.msg-text p:last-child{margin-bottom:0}
+.msg-text strong{color:var(--smoke);font-weight:600}.msg-text em{color:var(--au2);font-style:normal;font-weight:500}
+.msg-text ul{padding-left:1.1rem;margin:.35rem 0}.msg-text li{margin-bottom:.25rem}
+.msg-text code{background:var(--ink5);color:var(--au2);padding:.08rem .35rem;border-radius:2px;font-family:var(--mono);font-size:.76rem}
+.msg.user .msg-text{background:var(--ink4);border:1px solid var(--bd);padding:.7rem .95rem;border-radius:0 var(--r2) var(--r2) var(--r2);color:var(--smoke)}
+.chat-input-area{padding-top:.9rem;border-top:1px solid var(--bd);flex-shrink:0}
+.chat-row{display:flex;gap:.55rem;align-items:flex-end}
+.chat-send{flex-shrink:0;width:42px;height:42px;border-radius:50%;background:var(--au);border:none;
+  color:var(--ink);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;align-self:flex-end}
+.chat-send:hover{background:var(--au2);transform:scale(1.05)}
+.chat-send:disabled{background:var(--au3);cursor:not-allowed;transform:none}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.chip{font-size:.7rem;color:var(--smoke3);background:var(--ink4);border:1px solid var(--bd);
+  padding:.28rem .65rem;border-radius:20px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.chip:hover{background:var(--au4);color:var(--au2);border-color:var(--au3)}
+
+/* ── DOTS LOADING ── */
+.dots{display:inline-flex;gap:3px;align-items:center}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--au);animation:dpulse 1.2s ease infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes dpulse{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:1;transform:scale(1.2)}}
+
+/* ── SKELETON ── */
+.skel{background:linear-gradient(90deg,var(--ink3) 25%,var(--ink4) 50%,var(--ink3) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--r);color:transparent}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── PORTFOLIO ── */
+.ptf-row{display:flex;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--bd2);gap:.8rem}
+.ptf-row:last-child{border-bottom:none}
+.ptf-ticker{font-family:var(--mono);font-size:.75rem;font-weight:700;color:var(--au2);width:60px;flex-shrink:0}
+.ptf-name{flex:1;font-size:.78rem;color:var(--smoke2)}
+.ptf-qty{font-family:var(--mono);font-size:.72rem;color:var(--smoke3);width:55px;text-align:right}
+.ptf-price{font-family:var(--mono);font-size:.75rem;color:var(--smoke);width:75px;text-align:right}
+.ptf-total{font-family:var(--mono);font-size:.78rem;font-weight:600;color:var(--au2);width:90px;text-align:right}
+.ptf-chg{font-family:var(--mono);font-size:.7rem;width:65px;text-align:right}
+
+/* ── NET WORTH TRACKER ── */
+.nw-card{background:var(--ink3);border:1px solid var(--bd);border-radius:var(--r2);padding:1.3rem;position:relative;overflow:hidden}
+.nw-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--au),transparent);opacity:.25}
+
+/* ── PRICE ALERT ── */
+.alert-row{display:flex;align-items:center;gap:.6rem;padding:.55rem 0;border-bottom:1px solid var(--bd2)}
+.alert-row:last-child{border-bottom:none}
+
+/* ── STATS BAR ── */
+.stat-bar{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.stat{display:flex;flex-direction:column}
+.stat-label{font-family:var(--mono);font-size:.55rem;color:var(--smoke4);letter-spacing:.13em;text-transform:uppercase;margin-bottom:.2rem}
+.stat-val{font-family:var(--mono);font-size:.9rem;font-weight:500;color:var(--smoke)}
+.stat-val.green{color:var(--gr)}.stat-val.red{color:var(--cr)}.stat-val.gold{color:var(--au2)}
+
+/* ── TOGGLE ── */
+.toggle-group{display:flex;background:var(--ink4);border:1px solid var(--bd);border-radius:var(--r);padding:3px;gap:2px}
+.toggle-opt{flex:1;padding:.38rem .7rem;font-size:.72rem;font-weight:500;text-align:center;
+  cursor:pointer;border-radius:2px;transition:all .15s;color:var(--smoke4);user-select:none}
+.toggle-opt.active{background:var(--au);color:var(--ink);font-weight:600}
+
+/* ── CHART CONTAINER ── */
+.chart-wrap{position:relative;padding:.5rem 0}
+.chart-wrap canvas{max-height:220px}
+.chart-wrap-lg canvas{max-height:300px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}.g4,.g5{grid-template-columns:repeat(2,1fr)}
+  .gcol,.gcol-r{grid-template-columns:1fr}.content{padding:1.3rem 1.1rem}
+  .ticker-bar{padding:.55rem 1.1rem}.page-header{padding:1.1rem 1.3rem}
+  .span2{grid-column:auto}.mobile-btn{display:flex}
+  .chart-wrap canvas,.chart-wrap-lg canvas{max-height:200px}
+}
+@media(max-width:600px){.g3,.g2{grid-template-columns:1fr}.bar-row{grid-template-columns:90px 1fr 75px}}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99;display:none}
+.overlay.open{display:block}
+.flex-between{display:flex;justify-content:space-between;align-items:center}
+.flex{display:flex}.flex-col{display:flex;flex-direction:column}
+.text-center{text-align:center}.text-right{text-align:right}
+.text-gold{color:var(--au2)}.text-green{color:var(--gr)}.text-red{color:var(--cr)}
+.text-muted{color:var(--smoke4)}.text-sm{font-size:.78rem}.text-xs{font-size:.67rem;font-family:var(--mono)}
+.fw6{font-weight:600}.mono{font-family:var(--mono)}.serif{font-family:var(--serif)}
+.w100{width:100%}
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="shell">
+
+<!-- ════════ SIDEBAR ════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="s-logo">
+    <div class="s-logo-mark">Woden Capital</div>
+    <div class="s-logo-sub">Asesor Financiero Privado</div>
+  </div>
+  <div class="s-rates" id="sideRates">
+    <div class="s-rate-row"><span class="s-rate-label">MEP</span><span class="s-rate-val dim" id="sr-mep">···</span></div>
+    <div class="s-rate-row"><span class="s-rate-label">Blue</span><span class="s-rate-val dim" id="sr-blue">···</span></div>
+    <div class="s-rate-row"><span class="s-rate-label">Oficial</span><span class="s-rate-val dim" id="sr-ofic">···</span></div>
+    <div class="s-rate-row"><span class="s-rate-label">BTC</span><span class="s-rate-val dim" id="sr-btc">···</span></div>
+    <div class="s-rate-row"><span class="s-rate-label">Inflación</span><span class="s-rate-val" id="sr-infl">~2.2%/mes</span></div>
+    <div class="s-rate-row"><span class="s-rate-label">PF mejor tasa</span><span class="s-rate-val" id="sr-pf">cargando...</span></div>
+  </div>
+  <nav class="s-nav">
+    <div class="s-section">Principal</div>
+    <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">◈</span>Dashboard</div>
+    <div class="nav-item" onclick="showPage('mercado',this)"><span class="nav-icon">◎</span>Mercado Live</div>
+    <div class="nav-item" onclick="showPage('cripto',this)"><span class="nav-icon">⬡</span>Cripto</div>
+    <div class="s-section">Mi Dinero</div>
+    <div class="nav-item" onclick="showPage('perfil',this)"><span class="nav-icon">◇</span>Mi Perfil</div>
+    <div class="nav-item" onclick="showPage('distribucion',this)"><span class="nav-icon">⊞</span>Distribuir Sueldo</div>
+    <div class="nav-item" onclick="showPage('ahorro',this)"><span class="nav-icon">◐</span>Plan de Ahorro</div>
+    <div class="nav-item" onclick="showPage('deudas',this)"><span class="nav-icon">⊘</span>Tarjetas y Deudas<span class="nav-badge" id="deudaBadge" style="display:none">!</span></div>
+    <div class="nav-item" onclick="showPage('patrimonio',this)"><span class="nav-icon">◍</span>Patrimonio Neto</div>
+    <div class="s-section">Inversiones</div>
+    <div class="nav-item" onclick="showPage('invertir',this)"><span class="nav-icon">△</span>¿Dónde Invertir?</div>
+    <div class="nav-item" onclick="showPage('proyecciones',this)"><span class="nav-icon">⊛</span>Proyecciones</div>
+    <div class="nav-item" onclick="showPage('portfolio',this)"><span class="nav-icon">⬡</span>Mi Portfolio</div>
+    <div class="nav-item" onclick="showPage('mercaderia',this)"><span class="nav-icon">⊟</span>Comprar Mercadería</div>
+    <div class="s-section">Negocio</div>
+    <div class="nav-item" onclick="showPage('rentabilidad',this)"><span class="nav-icon">⊕</span>Rentabilidad</div>
+    <div class="s-section">IA</div>
+    <div class="nav-item" onclick="showPage('asesor',this)"><span class="nav-icon">✦</span>Asesor IA</div>
+  </nav>
+  <div class="s-footer">
+    <div class="s-refresh" onclick="refreshAll()">
+      <div class="s-refresh-dot"></div>
+      <span id="refreshLabel">Cargando datos...</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ════════ MAIN ════════ -->
+<div class="main">
+  <!-- Ticker -->
+  <div class="ticker-bar" id="tickerBar">
+    <div class="ticker-item"><span class="ticker-name">MEP</span><span class="ticker-price" id="t-mep">—</span></div>
+    <span class="ticker-sep">·</span>
+    <div class="ticker-item"><span class="ticker-name">Blue</span><span class="ticker-price" id="t-blue">—</span></div>
+    <span class="ticker-sep">·</span>
+    <div class="ticker-item"><span class="ticker-name">Oficial</span><span class="ticker-price" id="t-ofic">—</span></div>
+    <span class="ticker-sep">·</span>
+    <div class="ticker-item"><span class="ticker-name">CCL</span><span class="ticker-price" id="t-ccl">—</span></div>
+    <span class="ticker-sep">·</span>
+    <div class="ticker-item"><span class="ticker-name">BTC</span><span class="ticker-price" id="t-btc">—</span><span class="ticker-chg" id="t-btc-chg"></span></div>
+    <span class="ticker-sep">·</span>
+    <div class="ticker-item"><span class="ticker-name">ETH</span><span class="ticker-price" id="t-eth">—</span></div>
+    <span class="ticker-sep">·</span>
+    <div class="ticker-item"><span class="ticker-name">Inflación</span><span class="ticker-price" id="t-infl">2.2%/mes</span></div>
+    <span class="ticker-sep">·</span>
+    <div class="ticker-item"><span class="ticker-name">PF Tasa</span><span class="ticker-price" id="t-pf">cargando</span></div>
+    <span class="ticker-sep">·</span>
+    <div class="ticker-item"><span class="ticker-name">UVA</span><span class="ticker-price" id="t-uva">—</span></div>
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="flex" style="align-items:center;gap:.75rem">
+      <div class="mobile-btn" onclick="toggleSidebar()">☰</div>
+      <div>
+        <div class="page-eyebrow" id="pgEyebrow">PRINCIPAL</div>
+        <div class="page-title" id="pgTitle">Dashboard</div>
+      </div>
+    </div>
+    <div class="page-meta" id="pgMeta"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+<!-- ════════ DASHBOARD ════════ -->
+<div class="panel active" id="page-dashboard">
+  <div class="gcol mb4">
+    <div class="card card-lg" style="background:linear-gradient(135deg,var(--ink3),var(--ink4));position:relative;overflow:hidden">
+      <div style="position:absolute;top:-50px;right:-50px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(196,162,78,.07),transparent 70%)"></div>
+      <div class="eyebrow" id="dashBriefDate">—</div>
+      <div class="serif mb2" style="font-size:1.35rem;font-weight:600;color:var(--smoke)" id="dashBriefTitle">Brief Financiero</div>
+      <div class="text-sm" style="color:var(--smoke3);line-height:1.8" id="dashBriefText">
+        <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Cargando datos del mercado...
+      </div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.5rem">
+      <div class="eyebrow mb2">Salud Financiera</div>
+      <div class="donut-wrap" style="width:100px;height:100px;margin-bottom:.8rem">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <circle class="donut-bg" cx="50" cy="50" r="42"/>
+          <circle id="healthArc" class="donut-fill" cx="50" cy="50" r="42" stroke="var(--am)" stroke-dasharray="0 264"/>
+        </svg>
+        <div class="donut-center">
+          <span id="healthNum" style="font-family:var(--serif);font-size:1.7rem;font-weight:700;color:var(--am)">—</span>
+        </div>
+      </div>
+      <div class="eyebrow" id="healthLabel">Completá tu perfil</div>
+      <div class="sep w100"></div>
+      <div id="healthDetails" style="font-size:.73rem;color:var(--smoke4);line-height:1.8;text-align:left;width:100%">Ingresá tus datos en Mi Perfil</div>
+    </div>
+  </div>
+
+  <div class="eyebrow mb2">Mercado Ahora</div>
+  <div class="g4 mb4" id="dashMktCards">
+    <div class="mkt-card"><div><div class="mkt-name">MEP</div><div class="mkt-price skel" style="width:80px">—</div></div></div>
+    <div class="mkt-card"><div><div class="mkt-name">Blue</div><div class="mkt-price skel" style="width:80px">—</div></div></div>
+    <div class="mkt-card"><div><div class="mkt-name">BTC</div><div class="mkt-price skel" style="width:100px">—</div></div></div>
+    <div class="mkt-card"><div><div class="mkt-name">Inflación</div><div class="mkt-price">~2.2%</div><div class="mkt-sub">mensual Mar '26</div></div></div>
+  </div>
+
+  <div class="g2 mb4">
+    <div class="card">
+      <div class="eyebrow mb2">Recomendaciones del Día</div>
+      <div id="dashRecs"><div class="text-sm text-muted">Cargando mercado...</div></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow mb2">Tu Resumen</div>
+      <div id="dashResumen"><div class="text-sm text-muted">Completá tu perfil para ver el resumen.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow mb2">Rendimiento — $100.000 en diferentes instrumentos hoy</div>
+    <div class="chart-wrap"><canvas id="chartDashComp"></canvas></div>
+  </div>
+</div>
+
+<!-- ════════ MERCADO LIVE ════════ -->
+<div class="panel" id="page-mercado">
+  <div class="al-g alert mb4">Datos en tiempo real — <strong>Dólares:</strong> dolarapi.com · <strong>Tasas PF:</strong> argentinadatos.com · <strong>Acciones:</strong> Yahoo Finance · Actualización automática cada 5 min.</div>
+
+  <div class="eyebrow mb2">Tipo de Cambio — Todos los Dólares</div>
+  <div class="g4 mb4" id="dollarCards">
+    <div class="mkt-card skel" style="height:80px"></div>
+    <div class="mkt-card skel" style="height:80px"></div>
+    <div class="mkt-card skel" style="height:80px"></div>
+    <div class="mkt-card skel" style="height:80px"></div>
+  </div>
+
+  <div class="g2 mb4">
+    <div class="card">
+      <div class="eyebrow mb2">Tasas — Instrumentos en Pesos (Live)</div>
+      <div id="tasasTable"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow mb2">Evolución Inflación — Últimos 12 meses</div>
+      <div class="chart-wrap"><canvas id="chartInflacion"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g2 mb4">
+    <div class="card">
+      <div class="eyebrow mb2">Acciones Argentina — Merval</div>
+      <div id="mervalTable"><div class="text-sm text-muted">Cargando cotizaciones...</div></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow mb2">CEDEARs Recomendados</div>
+      <div id="cedearTable"><div class="text-sm text-muted">Cargando...</div></div>
+    </div>
+  </div>
+
+  <div class="card mb4">
+    <div class="eyebrow mb2">Comparativa de Rendimiento Real — $100.000 a 12 meses</div>
+    <div class="chart-wrap-lg"><canvas id="chartMercadoComp"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow mb2">Análisis: ¿Qué instrumento conviene según tu horizonte?</div>
+    <div id="instrAnalisis"></div>
+  </div>
+</div>
+
+<!-- ════════ CRIPTO ════════ -->
+<div class="panel" id="page-cripto">
+  <div class="al-i alert mb4">Datos de <strong>CoinGecko API</strong> (gratuita, sin clave). Precios en USD y ARS al tipo de cambio MEP actual.</div>
+
+  <div class="g4 mb4" id="criptoCards">
+    <div class="mkt-card skel" style="height:90px"></div>
+    <div class="mkt-card skel" style="height:90px"></div>
+    <div class="mkt-card skel" style="height:90px"></div>
+    <div class="mkt-card skel" style="height:90px"></div>
+  </div>
+
+  <div class="g2 mb4">
+    <div class="card">
+      <div class="eyebrow mb2">BTC/USD — Precio últimas 7 días</div>
+      <div class="chart-wrap"><canvas id="chartBTC"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow mb2">ETH/USD — Precio últimas 7 días</div>
+      <div class="chart-wrap"><canvas id="chartETH"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="eyebrow mb2">Cripto en Portfolio Argentino — ¿Cuánto?</div>
+      <div class="text-sm" style="color:var(--smoke3);line-height:1.8;margin-bottom:1rem">
+        Para un perfil argentino, la cripto cumple un rol específico: dolarización rápida sin cepo. No es inversión principal.
+      </div>
+      <table class="tbl"><thead><tr><th>Perfil</th><th>% Cripto</th><th>Instrumento</th></tr></thead><tbody>
+        <tr><td>Conservador</td><td class="mono">0-3%</td><td>Solo USDT/stablecoins</td></tr>
+        <tr><td>Moderado</td><td class="mono gold">5-10%</td><td>BTC 60% / ETH 30% / USDT 10%</td></tr>
+        <tr><td>Agresivo</td><td class="mono">10-20%</td><td>BTC 50% / ETH 30% / Altcoins 20%</td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="eyebrow mb2">Calculadora Cripto → ARS</div>
+      <div class="field">
+        <label class="flabel">Cantidad</label>
+        <input type="number" id="criptoCalcQty" placeholder="0.01" oninput="calcCripto()">
+      </div>
+      <div class="field">
+        <label class="flabel">Moneda</label>
+        <select id="criptoCalcMoneda" onchange="calcCripto()">
+          <option value="btc">Bitcoin (BTC)</option>
+          <option value="eth">Ethereum (ETH)</option>
+          <option value="usdt">USDT / Stablecoin</option>
+        </select>
+      </div>
+      <div id="criptoCalcResult" class="mt2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PERFIL ════════ -->
+<div class="panel" id="page-perfil">
+  <div class="al-g alert mb4">Completá una vez — toda la app usa estos datos para personalizarse. Se guarda en tu navegador.</div>
+  <div class="g2">
+    <div class="card">
+      <div class="eyebrow mb3">Ingresos Mensuales</div>
+      <div class="field"><label class="flabel">Sueldo trabajo externo ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-sueldo" placeholder="1000000" oninput="saveProfile()"></div></div>
+      <div class="field"><label class="flabel">Ventas Casa Woden ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-local" placeholder="700000" oninput="saveProfile()"></div></div>
+      <div class="field"><label class="flabel">Otros ingresos ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-otros" placeholder="0" oninput="saveProfile()"></div></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow mb3">Gastos Fijos Mensuales</div>
+      <div class="field"><label class="flabel">Alquiler vivienda ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-alqviv" placeholder="300000" oninput="saveProfile()"></div></div>
+      <div class="field"><label class="flabel">Alquiler local ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-alqloc" placeholder="200000" oninput="saveProfile()"></div></div>
+      <div class="field"><label class="flabel">Comida / super ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-comida" placeholder="150000" oninput="saveProfile()"></div></div>
+      <div class="field"><label class="flabel">Servicios + celular ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-serv" placeholder="80000" oninput="saveProfile()"></div></div>
+      <div class="field"><label class="flabel">Movilidad / nafta ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-movil" placeholder="60000" oninput="saveProfile()"></div></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow mb3">Situación Actual</div>
+      <div class="field"><label class="flabel">Deuda total tarjetas ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-deuda" placeholder="1000000" oninput="saveProfile()"></div></div>
+      <div class="field"><label class="flabel">Ahorros pesos ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-ahpesos" placeholder="0" oninput="saveProfile()"></div></div>
+      <div class="field"><label class="flabel">Ahorros USD (dólares)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-ahusd" placeholder="0" oninput="saveProfile()"></div></div>
+      <div class="field"><label class="flabel">Inventario Casa Woden ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-inventario" placeholder="9000000" oninput="saveProfile()"></div></div>
+    </div>
+    <div class="card">
+      <div class="eyebrow mb3">Perfil Inversor</div>
+      <div class="field"><label class="flabel">Perfil de riesgo</label>
+        <select id="p-riesgo" onchange="saveProfile()">
+          <option value="conservador">Conservador — No quiero perder</option>
+          <option value="moderado" selected>Moderado — Acepto algo de volatilidad</option>
+          <option value="agresivo">Agresivo — Busco máximo rendimiento</option>
+        </select></div>
+      <div class="field"><label class="flabel">Horizonte principal</label>
+        <select id="p-horizonte" onchange="saveProfile()">
+          <option value="corto">Corto (menos de 6 meses)</option>
+          <option value="medio" selected>Medio (6-24 meses)</option>
+          <option value="largo">Largo (más de 2 años)</option>
+        </select></div>
+      <div class="field"><label class="flabel">Objetivo principal</label>
+        <select id="p-objetivo" onchange="saveProfile()">
+          <option value="deuda">Salir de deudas primero</option>
+          <option value="colchon">Armar colchón de emergencia</option>
+          <option value="inversion">Invertir y hacer crecer</option>
+          <option value="negocio">Reinvertir en Casa Woden</option>
+        </select></div>
+      <div class="field"><label class="flabel">Broker activo</label>
+        <select id="p-broker" onchange="saveProfile()">
+          <option value="no">Sin broker aún</option>
+          <option value="balanz">Balanz</option>
+          <option value="iol">InvertirOnline (IOL)</option>
+          <option value="ppi">PPI</option>
+          <option value="otro">Otro</option>
+        </select></div>
+      <div class="field"><label class="flabel">Meta ahorro mensual ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="p-metaahorro" placeholder="150000" oninput="saveProfile()"></div></div>
+    </div>
+  </div>
+  <div class="mt2 text-sm" id="profileStatus"></div>
+</div>
+
+<!-- ════════ DISTRIBUCIÓN ════════ -->
+<div class="panel" id="page-distribucion">
+  <div class="gcol">
+    <div>
+      <div class="card mb3">
+        <div class="eyebrow mb3">Parámetros</div>
+        <div class="field"><label class="flabel">Ingreso total mensual ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="d-ing" placeholder="1700000" oninput="calcDist()"></div></div>
+        <div class="field"><label class="flabel">Gastos fijos totales ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="d-gas" placeholder="840000" oninput="calcDist()"></div></div>
+        <div class="field"><label class="flabel">Deuda tarjetas total ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="d-deuda" placeholder="1000000" oninput="calcDist()"></div></div>
+        <div class="field"><label class="flabel">Colchón actual ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="d-colchon" placeholder="0" oninput="calcDist()"></div></div>
+        <div class="field"><label class="flabel">Metodología</label>
+          <select id="d-metodo" onchange="calcDist()">
+            <option value="smart">Inteligente (ajusta a tu situación)</option>
+            <option value="503020">50/30/20 Clásico</option>
+            <option value="sobres">Método de Sobres</option>
+          </select></div>
+      </div>
+      <div id="distAlert"></div>
+    </div>
+    <div>
+      <div class="card mb3" id="distResult">
+        <div class="eyebrow mb2">Distribución</div>
+        <div class="text-sm text-muted">Ingresá tus números</div>
+      </div>
+      <div class="card mb3">
+        <div class="eyebrow mb2">Visualización</div>
+        <div class="chart-wrap"><canvas id="chartDist"></canvas></div>
+      </div>
+      <div class="card" id="distTimeline">
+        <div class="eyebrow mb2">Proyección</div>
+        <div class="text-sm text-muted" id="distTimelineContent">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ AHORRO ════════ -->
+<div class="panel" id="page-ahorro">
+  <div class="gcol">
+    <div>
+      <div class="card mb3">
+        <div class="eyebrow mb3">Configurar Meta</div>
+        <div class="field"><label class="flabel">Objetivo</label>
+          <select id="a-tipo" onchange="calcAhorro()">
+            <option value="colchon">Colchón de emergencia (3 meses gastos)</option>
+            <option value="inversion">Capital inicial de inversión ($1M)</option>
+            <option value="libre">Meta personalizada</option>
+          </select></div>
+        <div class="field" id="aMetaWrap">
+          <label class="flabel">Meta ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="a-meta" placeholder="500000" oninput="calcAhorro()"></div></div>
+        <div class="field"><label class="flabel">Ahorro mensual posible ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="a-mensual" placeholder="150000" oninput="calcAhorro()"></div></div>
+        <div class="field"><label class="flabel">Ya ahorrado ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="a-actual" placeholder="0" oninput="calcAhorro()"></div></div>
+        <div class="field"><label class="flabel">Instrumento</label>
+          <select id="a-instr" onchange="calcAhorro()">
+            <option value="mm">Money Market (~25% TNA)</option>
+            <option value="pf27">Plazo Fijo 27% TNA</option>
+            <option value="uva">PF UVA (inflación)</option>
+            <option value="lecap">Lecap (~30% TNA)</option>
+          </select></div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb3" id="ahorroResult">
+        <div class="eyebrow mb2">Tu Plan</div>
+        <div class="text-sm text-muted">Completá los datos para ver el plan</div>
+      </div>
+      <div class="card mb3">
+        <div class="eyebrow mb2">Proyección de crecimiento</div>
+        <div class="chart-wrap"><canvas id="chartAhorro"></canvas></div>
+      </div>
+      <div class="card" id="ahorroCompare">
+        <div class="eyebrow mb2">Comparativa instrumentos</div>
+        <div id="ahorroCompContent" class="text-sm text-muted">—</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ DEUDAS ════════ -->
+<div class="panel" id="page-deudas">
+  <div class="gcol-r">
+    <div>
+      <div class="card mb3">
+        <div class="eyebrow mb3">Agregar Deuda</div>
+        <div class="field"><label class="flabel">Nombre</label><input type="text" id="dt-nombre" placeholder="Visa Personal"></div>
+        <div class="field"><label class="flabel">Deuda total ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="dt-total" placeholder="800000"></div></div>
+        <div class="field"><label class="flabel">Pago mínimo mensual ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="dt-min" placeholder="80000"></div></div>
+        <div class="field"><label class="flabel">Tasa anual (%)</label>
+          <input type="number" id="dt-tasa" placeholder="180">
+          <div class="fhint">Tarjetas AR: 150-220% TNA aprox.</div></div>
+        <button class="btn btn-p btn-full" onclick="addDeuda()">+ Agregar</button>
+      </div>
+      <div class="card">
+        <div class="eyebrow mb2">Plan de ataque</div>
+        <div class="field"><label class="flabel">Extra mensual disponible ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="dt-extra" placeholder="200000" oninput="renderDeudas()"></div></div>
+        <div class="field"><label class="flabel">Estrategia</label>
+          <select id="dt-estrategia" onchange="renderDeudas()">
+            <option value="avalancha">Avalancha (mayor tasa primero)</option>
+            <option value="bola">Bola de nieve (menor saldo primero)</option>
+          </select></div>
+      </div>
+    </div>
+    <div>
+      <div class="g2 mb3">
+        <div class="card card-sm"><div class="eyebrow">Deuda Total</div><div class="big-val red sm" id="dtTotal">$0</div></div>
+        <div class="card card-sm"><div class="eyebrow">Costo/mes (interés)</div><div class="big-val amber sm" id="dtInteres">$0</div></div>
+      </div>
+      <div class="card mb3" id="deudasList"><div class="eyebrow mb2">Mis Deudas</div>
+        <div class="text-sm text-muted">Agregá tu primera tarjeta →</div></div>
+      <div class="card mb3">
+        <div class="eyebrow mb2">Proyección de pagos</div>
+        <div class="chart-wrap"><canvas id="chartDeuda"></canvas></div>
+      </div>
+      <div class="card" id="dtPlanCard">
+        <div class="eyebrow mb2">Plan — <span id="dtPlanNombre">Avalancha</span></div>
+        <div id="dtPlan" class="text-sm text-muted">Cargá tus deudas para ver el plan.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PATRIMONIO NETO ════════ -->
+<div class="panel" id="page-patrimonio">
+  <div class="al-i alert mb4">Tu patrimonio neto = lo que tenés − lo que debés. Se guarda localmente y te permite ver la evolución.</div>
+  <div class="gcol">
+    <div>
+      <div class="card mb3">
+        <div class="eyebrow mb3">Activos (lo que tenés)</div>
+        <div class="field"><label class="flabel">Efectivo / cuenta bancaria ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="pn-efectivo" placeholder="50000" oninput="calcPatrimonio()"></div></div>
+        <div class="field"><label class="flabel">Ahorros en pesos ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="pn-ahpesos" placeholder="0" oninput="calcPatrimonio()"></div></div>
+        <div class="field"><label class="flabel">Dólares (USD) — en pesos</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="pn-dolares" placeholder="0" oninput="calcPatrimonio()"></div></div>
+        <div class="field"><label class="flabel">Inventario Casa Woden ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="pn-inventario" placeholder="9000000" oninput="calcPatrimonio()"></div></div>
+        <div class="field"><label class="flabel">Inversiones (plazo fijo, CEDEARs, etc.) ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="pn-inversiones" placeholder="0" oninput="calcPatrimonio()"></div></div>
+        <div class="field"><label class="flabel">Otros activos (auto, bienes) ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="pn-otros" placeholder="0" oninput="calcPatrimonio()"></div></div>
+      </div>
+      <div class="card">
+        <div class="eyebrow mb3">Pasivos (lo que debés)</div>
+        <div class="field"><label class="flabel">Deuda tarjetas ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="pn-dtarjetas" placeholder="1000000" oninput="calcPatrimonio()"></div></div>
+        <div class="field"><label class="flabel">Préstamos ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="pn-prestamos" placeholder="0" oninput="calcPatrimonio()"></div></div>
+        <div class="field"><label class="flabel">Otras deudas ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="pn-otras" placeholder="0" oninput="calcPatrimonio()"></div></div>
+        <button class="btn btn-p btn-full mt2" onclick="guardarPatrimonio()">💾 Guardar snapshot</button>
+      </div>
+    </div>
+    <div>
+      <div class="g2 mb3">
+        <div class="card card-sm text-center"><div class="eyebrow">Activos</div><div class="big-val green sm" id="pnActivos">$0</div></div>
+        <div class="card card-sm text-center"><div class="eyebrow">Pasivos</div><div class="big-val red sm" id="pnPasivos">$0</div></div>
+      </div>
+      <div class="card mb3 text-center">
+        <div class="eyebrow">Patrimonio Neto</div>
+        <div class="big-val vg" id="pnNeto" style="color:var(--am)">$0</div>
+        <div class="caption" id="pnCaption">—</div>
+      </div>
+      <div class="card mb3">
+        <div class="eyebrow mb2">Evolución Patrimonial</div>
+        <div class="chart-wrap"><canvas id="chartPatrimonio"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="eyebrow mb2">Historial de Snapshots</div>
+        <div id="pnHistorial" class="text-sm text-muted">Guardá tu primer snapshot para empezar a traquear.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ INVERTIR ════════ -->
+<div class="panel" id="page-invertir">
+  <div class="gcol">
+    <div>
+      <div class="card mb3">
+        <div class="eyebrow mb3">¿Tengo condiciones para invertir?</div>
+        <div class="field"><label class="flabel">Capital disponible ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="inv-capital" placeholder="300000" oninput="calcInvertir()"></div>
+          <div class="fhint">Solo dinero que no necesitás en 90+ días</div></div>
+        <div class="field"><label class="flabel">Deuda activa en tarjetas ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="inv-deuda" placeholder="1000000" oninput="calcInvertir()"></div></div>
+        <div class="field"><label class="flabel">Colchón de emergencia actual ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="inv-colchon" placeholder="0" oninput="calcInvertir()"></div></div>
+        <div class="field"><label class="flabel">Gastos fijos mensuales ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="inv-gastos" placeholder="840000" oninput="calcInvertir()"></div></div>
+        <div class="field"><label class="flabel">Perfil de riesgo</label>
+          <select id="inv-riesgo" onchange="calcInvertir()">
+            <option value="conservador">Conservador</option>
+            <option value="moderado" selected>Moderado</option>
+            <option value="agresivo">Agresivo</option>
+          </select></div>
+        <div class="field"><label class="flabel">Horizonte</label>
+          <select id="inv-horizonte" onchange="calcInvertir()">
+            <option value="corto">Corto (1-6 meses)</option>
+            <option value="medio" selected>Medio (6-24 meses)</option>
+            <option value="largo">Largo (2+ años)</option>
+          </select></div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb3" id="invDecision"><div class="eyebrow mb2">¿Conviene invertir ahora?</div><div class="text-sm text-muted">Ingresá tus datos</div></div>
+      <div class="card mb3" id="invPortfolio"><div class="eyebrow mb2">Portafolio Sugerido</div><div class="text-sm text-muted" id="invPortContent">—</div></div>
+      <div class="card">
+        <div class="eyebrow mb2">Distribución del portafolio</div>
+        <div class="chart-wrap"><canvas id="chartPortfolio"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PROYECCIONES ════════ -->
+<div class="panel" id="page-proyecciones">
+  <div class="gcol">
+    <div>
+      <div class="card mb3">
+        <div class="eyebrow mb3">Calculadora de Rendimiento</div>
+        <div class="field"><label class="flabel">Capital inicial ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="py-capital" placeholder="500000" oninput="calcProy()"></div></div>
+        <div class="field"><label class="flabel">Aporte mensual ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="py-aporte" placeholder="0" oninput="calcProy()"></div></div>
+        <div class="field"><label class="flabel">Plazo (meses)</label>
+          <input type="number" id="py-plazo" placeholder="12" oninput="calcProy()"></div>
+        <div class="field"><label class="flabel">Instrumento</label>
+          <select id="py-instr" onchange="calcProy()">
+            <option value="pf27">Plazo Fijo 27% TNA</option>
+            <option value="uva">PF UVA (inflación ~2.2%/mes)</option>
+            <option value="lecap">Lecap 30% TNA</option>
+            <option value="mm">Money Market 25% TNA</option>
+            <option value="mep">Dólar MEP (0% rendimiento, reserva)</option>
+            <option value="cedear">CEDEARs (est. 25% USD/año)</option>
+            <option value="merval">Merval ARG (est. 40% ARS/año)</option>
+            <option value="btc">Bitcoin (est. 30% USD/año — alta volatilidad)</option>
+          </select></div>
+        <div class="field"><label class="flabel">Inflación mensual estimada (%)</label>
+          <input type="number" id="py-infl" placeholder="2.2" oninput="calcProy()"></div>
+      </div>
+      <div class="card" id="proyResult">
+        <div class="eyebrow mb2">Resultado</div>
+        <div class="text-sm text-muted">Ingresá datos para calcular</div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb3">
+        <div class="eyebrow mb2">Curva de crecimiento mes a mes</div>
+        <div class="chart-wrap-lg"><canvas id="chartProy"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="eyebrow mb2">Todos los instrumentos — mismo capital y plazo</div>
+        <div id="proyComparativa" class="text-sm text-muted">Ingresá capital y plazo para comparar</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PORTFOLIO ════════ -->
+<div class="panel" id="page-portfolio">
+  <div class="al-i alert mb4">Registrá tus posiciones actuales. Los precios de CEDEARs/acciones se actualizan vía Yahoo Finance.</div>
+  <div class="gcol-r">
+    <div>
+      <div class="card mb3">
+        <div class="eyebrow mb3">Agregar Posición</div>
+        <div class="field"><label class="flabel">Ticker / Nombre</label><input type="text" id="ptf-ticker" placeholder="AAPL / PF BNA / USD MEP"></div>
+        <div class="field"><label class="flabel">Tipo</label>
+          <select id="ptf-tipo">
+            <option value="cedear">CEDEAR</option>
+            <option value="accion">Acción ARG (Merval)</option>
+            <option value="pf">Plazo Fijo</option>
+            <option value="mep">Dólar MEP</option>
+            <option value="cripto">Cripto</option>
+            <option value="otro">Otro</option>
+          </select></div>
+        <div class="field"><label class="flabel">Cantidad / Monto ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="ptf-monto" placeholder="100000"></div></div>
+        <div class="field"><label class="flabel">Precio de compra ($)</label>
+          <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="ptf-precio" placeholder="0"></div></div>
+        <button class="btn btn-p btn-full" onclick="addPosition()">+ Agregar</button>
+      </div>
+    </div>
+    <div>
+      <div class="g2 mb3">
+        <div class="card card-sm"><div class="eyebrow">Portfolio Total</div><div class="big-val sm" id="ptfTotal">$0</div></div>
+        <div class="card card-sm"><div class="eyebrow">P&L Total</div><div class="big-val sm" id="ptfPnL">$0</div></div>
+      </div>
+      <div class="card mb3">
+        <div class="eyebrow mb2">Mis Posiciones</div>
+        <div id="ptfList" class="text-sm text-muted">Agregá tu primera posición.</div>
+      </div>
+      <div class="card">
+        <div class="eyebrow mb2">Distribución del portfolio</div>
+        <div class="chart-wrap"><canvas id="chartPtfDist"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ MERCADERÍA ════════ -->
+<div class="panel" id="page-mercaderia">
+  <div class="al-g alert mb4">¿Adelanto compra de stock o pongo ese capital a trabajar en un instrumento financiero?</div>
+  <div class="gcol">
+    <div class="card">
+      <div class="eyebrow mb3">Datos de la Compra</div>
+      <div class="field"><label class="flabel">Monto de la compra ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="mc-monto" placeholder="500000" oninput="calcMerc()"></div></div>
+      <div class="field"><label class="flabel">Aumento esperado del proveedor (%)</label>
+        <input type="number" id="mc-aumento" placeholder="5" oninput="calcMerc()">
+        <div class="fhint">% estimado de aumento en el próximo mes</div></div>
+      <div class="field"><label class="flabel">Stock actual (días cubiertos)</label>
+        <input type="number" id="mc-stock" placeholder="30" oninput="calcMerc()"></div>
+      <div class="field"><label class="flabel">Margen de reventa (%)</label>
+        <input type="number" id="mc-margen" placeholder="60" oninput="calcMerc()"></div>
+      <div class="field"><label class="flabel">¿Capital propio o financiado?</label>
+        <select id="mc-disp" onchange="calcMerc()">
+          <option value="si">Capital propio</option>
+          <option value="no">Financiado (tarjeta / préstamo)</option>
+        </select></div>
+      <div class="field"><label class="flabel">Comparar contra</label>
+        <select id="mc-vs" onchange="calcMerc()">
+          <option value="pf27">Plazo Fijo 27% TNA</option>
+          <option value="lecap">Lecap 30% TNA</option>
+          <option value="uva">PF UVA (inflación)</option>
+        </select></div>
+    </div>
+    <div>
+      <div class="card mb3" id="mcVeredicto"><div class="eyebrow mb2">Veredicto</div><div class="text-sm text-muted">Ingresá los datos</div></div>
+      <div class="card mb3" id="mcAnalisis"><div class="eyebrow mb2">Análisis</div><div id="mcAnalisisContent" class="text-sm text-muted">—</div></div>
+      <div class="card">
+        <div class="eyebrow mb2">Comparativa visual</div>
+        <div class="chart-wrap"><canvas id="chartMerc"></canvas></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ RENTABILIDAD ════════ -->
+<div class="panel" id="page-rentabilidad">
+  <div class="gcol">
+    <div class="card">
+      <div class="eyebrow mb3">Casa Woden — Datos del Negocio</div>
+      <div class="field"><label class="flabel">Ventas mensuales ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="r-ventas" placeholder="700000" oninput="calcRent()"></div></div>
+      <div class="field"><label class="flabel">Costo mercadería vendida ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="r-cmv" placeholder="280000" oninput="calcRent()"></div>
+        <div class="fhint">Precio de compra de lo que vendiste</div></div>
+      <div class="field"><label class="flabel">Alquiler local ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="r-alq" placeholder="200000" oninput="calcRent()"></div></div>
+      <div class="field"><label class="flabel">Sueldos ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="r-sued" placeholder="0" oninput="calcRent()"></div></div>
+      <div class="field"><label class="flabel">Servicios / monotributo / otros ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="r-serv" placeholder="80000" oninput="calcRent()"></div></div>
+      <div class="field"><label class="flabel">Retiro dueño ($)</label>
+        <div class="pfx-wrap"><span class="pfx">$</span><input type="number" id="r-retiro" placeholder="0" oninput="calcRent()"></div>
+        <div class="fhint">Con el plan nuevo: $0 — trabajo externo cubre tu vida</div></div>
+      <div class="field"><label class="flabel">Inflación mensual (%)</label>
+        <input type="number" id="r-infl" placeholder="2.2" oninput="calcRent()"></div>
+    </div>
+    <div>
+      <div class="g2 mb3">
+        <div class="card card-sm text-center" id="rentScoreCard"><div class="eyebrow">Puntaje</div><div id="rentScore">—</div></div>
+        <div class="card card-sm"><div class="eyebrow">Ganancia Neta</div><div class="big-val sm" id="rentNeta">—</div><div class="caption">después de costos</div></div>
+      </div>
+      <div class="card mb3"><div class="eyebrow mb2">Estado de Resultados</div><div id="rentPnl"></div></div>
+      <div class="card mb3">
+        <div class="eyebrow mb2">Márgenes</div>
+        <div class="chart-wrap"><canvas id="chartRent"></canvas></div>
+      </div>
+      <div class="card"><div class="eyebrow mb2">Diagnóstico</div><div id="rentDiag" class="text-sm text-muted">Ingresá los números del negocio</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ASESOR IA ════════ -->
+<div class="panel" id="page-asesor">
+  <div class="gcol">
+    <div class="flex-col" style="height:calc(100vh - 195px)">
+      <div class="card card-sm mb3" style="flex-shrink:0">
+        <div class="eyebrow">Contexto del Asesor</div>
+        <div class="text-xs text-muted mt1" id="aiCtxBar" style="line-height:1.8">
+          📍 Casa Woden · Bahía Blanca · Vaca Muerta boom<br>
+          🎯 Estrategia: trabajo externo financia vida — local reinvierte todo
+        </div>
+      </div>
+      <div class="card" style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+        <div class="chat-msgs" id="chatMsgs">
+          <div class="msg">
+            <div class="msg-av ai">W</div>
+            <div class="msg-body">
+              <div class="msg-role">Asesor Woden Capital</div>
+              <div class="msg-text">
+                <p>Sistema activo con datos de mercado en tiempo real. Tengo cargado el contexto completo de <strong>Casa Woden</strong>, tu situación financiera y los indicadores del mercado argentino actualizados.</p>
+                <p>Puedo ayudarte con inversiones, análisis de compra de stock, estrategia de deuda, rentabilidad del negocio, o cualquier consulta financiera.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-row">
+            <textarea id="chatInput" placeholder="Consultá cualquier cosa... Ctrl+Enter para enviar" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea>
+            <button class="chat-send" id="chatSendBtn" onclick="sendChat()">↑</button>
+          </div>
+          <div class="chips" id="chatChips">
+            <span class="chip" onclick="useChip(this)">¿Compro mercadería o invierto?</span>
+            <span class="chip" onclick="useChip(this)">¿Qué hago con $300k libres?</span>
+            <span class="chip" onclick="useChip(this)">Plan salir de deuda en 6 meses</span>
+            <span class="chip" onclick="useChip(this)">¿Qué CEDEAR compro hoy?</span>
+            <span class="chip" onclick="useChip(this)">Estrategia Trunk Show Bahía Blanca</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb3">
+        <div class="eyebrow mb2">Mercado Ahora</div>
+        <div id="aiMktSnap" class="text-sm text-muted">Cargando...</div>
+      </div>
+      <div class="card mb3">
+        <div class="eyebrow mb2">Alertas del Día</div>
+        <div id="aiAlertas" class="text-sm text-muted">Analizando...</div>
+      </div>
+      <div class="card">
+        <div class="eyebrow mb2">Últimas Consultas</div>
+        <div id="aiHistorial" class="text-sm text-muted">Tus consultas recientes aparecerán acá.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /shell -->
+<script>
+// ════════════════════════════════
+// STATE
+// ════════════════════════════════
+const MKT = { mep:null,blue:null,oficial:null,ccl:null,cripto:null,uva:null,
+  pfTasa:null,inflHistorica:[],btc:null,eth:null,btcHist:[],ethHist:[],
+  merval:{},tasasPF:[] };
+const STATE = { profile:{}, debts:[], positions:[], patrimonyHistory:[], chatHistory:[] };
+let charts = {};
+
+const $ = id => document.getElementById(id);
+const fmt = n => '$' + Math.round(n||0).toLocaleString('es-AR');
+const fmtUSD = n => 'USD ' + (n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pctAbs = n => (n*100).toFixed(1)+'%';
+const pct = n => (n>=0?'+':'') + (n*100).toFixed(1)+'%';
+const MESES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MESES_L=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+// Chart defaults
+Chart.defaults.color = '#6E6760';
+Chart.defaults.borderColor = 'rgba(196,162,78,0.1)';
+Chart.defaults.font.family = "'JetBrains Mono', monospace";
+Chart.defaults.font.size = 10;
+
+// ════════════════════════════════
+// STORAGE
+// ════════════════════════════════
+function save() {
+  try {
+    localStorage.setItem('wc_profile', JSON.stringify(STATE.profile));
+    localStorage.setItem('wc_debts', JSON.stringify(STATE.debts));
+    localStorage.setItem('wc_positions', JSON.stringify(STATE.positions));
+    localStorage.setItem('wc_patrimony', JSON.stringify(STATE.patrimonyHistory));
+    localStorage.setItem('wc_chat', JSON.stringify(STATE.chatHistory.slice(-20)));
+  } catch(e){}
+}
+
+function load() {
+  try {
+    ['profile','debts','positions','patrimonyHistory','chatHistory'].forEach(k => {
+      const key = {profile:'wc_profile',debts:'wc_debts',positions:'wc_positions',patrimonyHistory:'wc_patrimony',chatHistory:'wc_chat'}[k];
+      const v = localStorage.getItem(key);
+      if(v) STATE[k] = JSON.parse(v);
+    });
+  } catch(e){}
+}
+
+// ════════════════════════════════
+// NAV
+// ════════════════════════════════
+const PAGE_META = {
+  dashboard:     {ey:'PRINCIPAL',    ti:'Dashboard'},
+  mercado:       {ey:'DATOS LIVE',   ti:'Mercado Argentina'},
+  cripto:        {ey:'CRIPTO',       ti:'Criptomonedas'},
+  perfil:        {ey:'CONFIGURACIÓN',ti:'Mi Perfil Financiero'},
+  distribucion:  {ey:'PLANIFICACIÓN',ti:'Distribuir Sueldo'},
+  ahorro:        {ey:'PLANIFICACIÓN',ti:'Plan de Ahorro'},
+  deudas:        {ey:'CONTROL',      ti:'Tarjetas y Deudas'},
+  patrimonio:    {ey:'SEGUIMIENTO',  ti:'Patrimonio Neto'},
+  invertir:      {ey:'INVERSIÓN',    ti:'¿Dónde Invertir?'},
+  proyecciones:  {ey:'SIMULACIÓN',   ti:'Proyecciones de Inversión'},
+  portfolio:     {ey:'SEGUIMIENTO',  ti:'Mi Portfolio'},
+  mercaderia:    {ey:'DECISIÓN',     ti:'¿Comprar Mercadería?'},
+  rentabilidad:  {ey:'NEGOCIO',      ti:'Rentabilidad Casa Woden'},
+  asesor:        {ey:'IA',           ti:'Asesor Financiero IA'},
+};
+
+function showPage(id, el) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  $('page-'+id)?.classList.add('active');
+  el?.classList.add('active');
+  const m = PAGE_META[id]||{};
+  $('pgEyebrow').textContent = m.ey||'';
+  $('pgTitle').textContent = m.ti||id;
+  if(window.innerWidth<=900) closeSidebar();
+  onShow(id);
+}
+
+function onShow(id) {
+  if(id==='distribucion') syncDistProfile();
+  if(id==='invertir') syncInvProfile();
+  if(id==='dashboard') renderDashboard();
+  if(id==='deudas') renderDeudas();
+  if(id==='portfolio') renderPortfolio();
+  if(id==='asesor') updateAICtx();
+  if(id==='patrimonio') renderPatrimony();
+}
+
+function toggleSidebar(){$('sidebar').classList.toggle('open');$('overlay').classList.toggle('open')}
+function closeSidebar(){$('sidebar').classList.remove('open');$('overlay').classList.remove('open')}
+
+// ════════════════════════════════
+// DATE
+// ════════════════════════════════
+function initDate() {
+  const now = new Date();
+  const str = now.getDate()+' de '+MESES_L[now.getMonth()]+' de '+now.getFullYear();
+  $('pgMeta').innerHTML = 'Argentina · '+str+'<br><span style="color:var(--smoke5)">'+
+    now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+' ART</span>';
+  $('dashBriefDate').textContent = str+' · Bahía Blanca';
+  $('dashBriefTitle').textContent = 'Brief Financiero — '+now.getDate()+' de '+MESES_L[now.getMonth()];
+}
+
+// ════════════════════════════════
+// MARKET DATA — REAL APIs
+// ════════════════════════════════
+async function fetchDolares() {
+  const r = await fetch('https://dolarapi.com/v1/dolares');
+  const data = await r.json();
+  data.forEach(item => {
+    const c = item.casa?.toLowerCase()||'';
+    const n = item.nombre?.toLowerCase()||'';
+    if(c==='bolsa'||n.includes('bolsa')||n.includes('mep')) MKT.mep = item.venta;
+    else if(c==='blue'||n.includes('blue')) MKT.blue = item.venta;
+    else if(c==='oficial'||n.includes('oficial')) MKT.oficial = item.venta;
+    else if(c==='contadoconliqui'||n.includes('contado')||n.includes('ccl')) MKT.ccl = item.venta;
+    else if(c==='cripto'||n.includes('cripto')) MKT.cripto = item.venta;
+  });
+  return data;
+}
+
+async function fetchArgData() {
+  // UVA
+  try {
+    const r = await fetch('https://api.argentinadatos.com/v1/finanzas/indices/uva');
+    const d = await r.json();
+    if(Array.isArray(d)&&d.length) MKT.uva = d[d.length-1].valor;
+  } catch(e){}
+
+  // Inflación histórica
+  try {
+    const r = await fetch('https://api.argentinadatos.com/v1/finanzas/indices/inflacion');
+    const d = await r.json();
+    if(Array.isArray(d)) MKT.inflHistorica = d.slice(-12);
+  } catch(e){}
+
+  // Tasas PF
+  try {
+    const r = await fetch('https://api.argentinadatos.com/v1/finanzas/tasas/depositos30diasPlazoFijo');
+    const d = await r.json();
+    if(Array.isArray(d)&&d.length) {
+      MKT.tasasPF = d.slice(-6);
+      MKT.pfTasa = d[d.length-1].valor;
+    }
+  } catch(e){}
+}
+
+async function fetchCrypto() {
+  try {
+    const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether,usd-coin&vs_currencies=usd&include_24hr_change=true&include_market_cap=true');
+    const d = await r.json();
+    MKT.btc = d.bitcoin;
+    MKT.eth = d.ethereum;
+    MKT.usdt = d.tether;
+    MKT.usdc = d['usd-coin'];
+  } catch(e){}
+}
+
+async function fetchCryptoHistory() {
+  try {
+    const [rBTC, rETH] = await Promise.all([
+      fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily'),
+      fetch('https://api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=7&interval=daily')
+    ]);
+    const dBTC = await rBTC.json();
+    const dETH = await rETH.json();
+    MKT.btcHist = dBTC.prices||[];
+    MKT.ethHist = dETH.prices||[];
+  } catch(e){}
+}
+
+async function fetchStocks() {
+  // Try Yahoo Finance for key ARG stocks and CEDEARs
+  const tickers = ['YPFD.BA','PAMP.BA','GGAL.BA','BMA.BA','LOMA.BA'];
+  for(const t of tickers) {
+    try {
+      const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${t}?interval=1d&range=2d`);
+      const d = await r.json();
+      const q = d?.chart?.result?.[0];
+      if(q) {
+        const closes = q.indicators?.quote?.[0]?.close||[];
+        const last = closes.filter(Boolean).slice(-1)[0];
+        const prev = closes.filter(Boolean).slice(-2)[0];
+        MKT.merval[t] = {price:last, prev, chg: prev ? (last-prev)/prev : null};
+      }
+    } catch(e){}
+  }
+}
+
+async function refreshAll() {
+  $('refreshLabel').textContent = 'Actualizando...';
+  document.querySelector('.s-refresh-dot').style.background = 'var(--am)';
+  try {
+    await Promise.allSettled([
+      fetchDolares(),
+      fetchArgData(),
+      fetchCrypto(),
+      fetchCryptoHistory(),
+      fetchStocks()
+    ]);
+    updateAllUI();
+    const t = new Date();
+    $('refreshLabel').textContent = 'Actualizado '+t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0');
+    document.querySelector('.s-refresh-dot').style.background = 'var(--gr)';
+  } catch(e) {
+    $('refreshLabel').textContent = 'Error — datos de referencia';
+    document.querySelector('.s-refresh-dot').style.background = 'var(--cr)';
+  }
+}
+
+// ════════════════════════════════
+// UPDATE UI AFTER MARKET DATA
+// ════════════════════════════════
+function updateAllUI() {
+  updateTicker();
+  updateSidebar();
+  updateDollarCards();
+  updateTasasTable();
+  updateMervalTable();
+  updateCedearTable();
+  updateCriptoCards();
+  updateDashMkt();
+  updateDashRecs();
+  updateAISnap();
+  updateInstrAnalisis();
+  buildChartInflacion();
+  buildChartDashComp();
+  buildChartMercadoComp();
+  if(MKT.btcHist.length) buildCryptoCharts();
+}
+
+function updateTicker() {
+  const {mep,blue,oficial,ccl,btc,eth,uva,pfTasa} = MKT;
+  if(mep) $('t-mep').textContent = '$'+mep.toLocaleString('es-AR');
+  if(blue) $('t-blue').textContent = '$'+blue.toLocaleString('es-AR');
+  if(oficial) $('t-ofic').textContent = '$'+oficial.toLocaleString('es-AR');
+  if(ccl) $('t-ccl').textContent = '$'+ccl.toLocaleString('es-AR');
+  if(btc) {
+    $('t-btc').textContent = fmtUSD(btc.usd);
+    const chgEl = $('t-btc-chg');
+    if(btc.usd_24h_change) {
+      const c = btc.usd_24h_change;
+      chgEl.textContent = (c>=0?'+':'')+c.toFixed(1)+'%';
+      chgEl.className = 'ticker-chg '+(c>=0?'up':'down');
+    }
+  }
+  if(eth) $('t-eth').textContent = fmtUSD(eth.usd);
+  if(uva) $('t-uva').textContent = '$'+parseFloat(uva).toFixed(2);
+  if(pfTasa) $('t-pf').textContent = pfTasa.toFixed(1)+'% TNA';
+}
+
+function updateSidebar() {
+  const {mep,blue,oficial,btc,pfTasa} = MKT;
+  if(mep) { $('sr-mep').textContent='$'+mep.toLocaleString('es-AR'); $('sr-mep').className='s-rate-val'; }
+  if(blue) { $('sr-blue').textContent='$'+blue.toLocaleString('es-AR'); $('sr-blue').className='s-rate-val'; }
+  if(oficial) { $('sr-ofic').textContent='$'+oficial.toLocaleString('es-AR'); $('sr-ofic').className='s-rate-val'; }
+  if(btc) $('sr-btc').textContent = 'USD '+Math.round(btc.usd).toLocaleString('en-US');
+  if(pfTasa) $('sr-pf').textContent = pfTasa.toFixed(1)+'% TNA (live)';
+}
+
+function updateDollarCards() {
+  const {mep,blue,oficial,ccl,cripto} = MKT;
+  const items = [
+    {name:'MEP (Bolsa)', val:mep, sub:'Legal · Sin límite · Recomendado', badge:'Usar este', bc:'b-lo'},
+    {name:'Blue (Informal)', val:blue, sub:'Mercado paralelo · Referencia', badge:'Paralelo', bc:'b-hi'},
+    {name:'Oficial BNA', val:oficial, sub:'Con cepo · Para compras cotidianas', badge:'Cepo', bc:'b-me'},
+    {name:'CCL (Cont. con Liqui)', val:ccl, sub:'Dolarización de activos', badge:'Empresas', bc:'b-bl'},
+    {name:'Cripto / USDT', val:cripto, sub:'Vía exchanges digitales', badge:'Rápido', bc:'b-pu'},
+  ];
+  const spread = (a,b) => a&&b ? ((a-b)/b*100).toFixed(1)+'%' : '—';
+  const dc = $('dollarCards');
+  if(!dc) return;
+  dc.innerHTML = items.map(i => `
+    <div class="mkt-card">
+      <div>
+        <div class="mkt-name">${i.name}</div>
+        <div class="mkt-price">${i.val?'$'+i.val.toLocaleString('es-AR'):'—'}</div>
+        <div class="mkt-sub">${i.sub}</div>
+      </div>
+      <div style="text-align:right">
+        <span class="badge ${i.bc}" style="margin-bottom:.3rem;display:inline-block">${i.badge}</span>
+        ${i.val&&oficial?'<div class="text-xs text-muted">spread<br>+'+spread(i.val,oficial)+'</div>':''}
+      </div>
+    </div>`).join('');
+}
+
+function updateTasasTable() {
+  const pfLive = MKT.pfTasa ? MKT.pfTasa.toFixed(1)+'% TNA ✓' : '~27% TNA';
+  const el = $('tasasTable');
+  if(!el) return;
+  el.innerHTML = `<table class="tbl"><thead><tr><th>Instrumento</th><th>Tasa</th><th>Riesgo</th><th>Liquidez</th><th>Recomendado para</th></tr></thead><tbody>
+    <tr><td>Plazo Fijo tradicional</td><td class="mono gold">${pfLive}</td><td><span class="badge b-lo">Bajo</span></td><td>30-60 días</td><td class="text-xs">Liquidez a plazo</td></tr>
+    <tr><td>Plazo Fijo UVA</td><td class="mono gold">CER + 1% (inflación)</td><td><span class="badge b-lo">Bajo</span></td><td>90+ días</td><td class="text-xs">Protección inflacionaria</td></tr>
+    <tr><td>Lecaps / Letras Tesoro</td><td class="mono gold">~30% TNA</td><td><span class="badge b-me">Soberano</span></td><td>30-180 días</td><td class="text-xs">Mejor rendimiento que PF</td></tr>
+    <tr><td>Fondo Money Market</td><td class="mono gold">~25% TNA</td><td><span class="badge b-lo">Bajo</span></td><td>Diaria</td><td class="text-xs">Liquidez inmediata</td></tr>
+    <tr><td>ON Corporativas USD</td><td class="mono green">7-10% USD anual</td><td><span class="badge b-me">Medio</span></td><td>180+ días</td><td class="text-xs">Dolarizar con renta</td></tr>
+  </tbody></table>`;
+}
+
+function updateMervalTable() {
+  const el = $('mervalTable');
+  if(!el) return;
+  const stocks = [
+    {t:'YPFD.BA', n:'YPF', s:'Energía', nota:'Vaca Muerta beneficiaria directa'},
+    {t:'PAMP.BA', n:'Pampa Energía', s:'Energía', nota:'Gas + electricidad, dividendos'},
+    {t:'GGAL.BA', n:'Banco Galicia', s:'Financiero', nota:'Crecimiento con crédito'},
+    {t:'BMA.BA',  n:'Banco Macro',   s:'Financiero', nota:'Exposición regional + Bahía Blanca'},
+    {t:'LOMA.BA', n:'Loma Negra',    s:'Construcción', nota:'Boom infraestructura sur'},
+  ];
+  el.innerHTML = `<table class="tbl"><thead><tr><th>Ticker</th><th>Empresa</th><th>Sector</th><th>Precio</th><th>Cambio</th><th>Nota</th></tr></thead><tbody>
+    ${stocks.map(s => {
+      const q = MKT.merval[s.t];
+      const price = q?.price ? '$'+Math.round(q.price).toLocaleString('es-AR') : '<span class="text-muted">—</span>';
+      const chg = q?.chg != null ? `<span class="mkt-pct ${q.chg>=0?'up':'down'}">${q.chg>=0?'+':''}${(q.chg*100).toFixed(1)}%</span>` : '<span class="mkt-pct na">—</span>';
+      return `<tr><td class="mono gold">${s.t.replace('.BA','')}</td><td><strong>${s.n}</strong></td><td><span class="badge b-me">${s.s}</span></td><td class="mono">${price}</td><td>${chg}</td><td class="text-xs text-muted">${s.nota}</td></tr>`;
+    }).join('')}
+  </tbody></table>`;
+}
+
+function updateCedearTable() {
+  const el = $('cedearTable');
+  if(!el) return;
+  el.innerHTML = `<table class="tbl"><thead><tr><th>CEDEAR</th><th>Empresa</th><th>Sector</th><th>Perfil</th><th>Por qué</th></tr></thead><tbody>
+    <tr><td class="mono gold">AAPL</td><td>Apple</td><td>Tecnología</td><td><span class="badge b-lo">Estable</span></td><td class="text-xs">Marca premium — afinidad con Woden</td></tr>
+    <tr><td class="mono gold">MELI</td><td>MercadoLibre</td><td>E-commerce</td><td><span class="badge b-me">Crecimiento</span></td><td class="text-xs">Negocio regional, conocido</td></tr>
+    <tr><td class="mono gold">GOOGL</td><td>Alphabet</td><td>Tecnología</td><td><span class="badge b-lo">Estable</span></td><td class="text-xs">Diversificado, largo plazo</td></tr>
+    <tr><td class="mono gold">BRK/B</td><td>Berkshire</td><td>Holding</td><td><span class="badge b-lo">Conservador</span></td><td class="text-xs">Filosofía Buffett — bajo riesgo</td></tr>
+    <tr><td class="mono gold">AMZN</td><td>Amazon</td><td>Tecnología</td><td><span class="badge b-me">Crecimiento</span></td><td class="text-xs">Cloud + retail, alto momentum</td></tr>
+  </tbody></table>`;
+}
+
+function updateCriptoCards() {
+  const el = $('criptoCards');
+  if(!el) return;
+  const mep = MKT.mep||1048;
+  const items = [
+    {id:'btc', n:'Bitcoin', sym:'BTC', d:MKT.btc},
+    {id:'eth', n:'Ethereum', sym:'ETH', d:MKT.eth},
+    {id:'usdt', n:'Tether', sym:'USDT', d:MKT.usdt},
+    {id:'usdc', n:'USD Coin', sym:'USDC', d:MKT.usdc},
+  ];
+  el.innerHTML = items.map(i => {
+    const usd = i.d?.usd||0;
+    const chg = i.d?.usd_24h_change||0;
+    const ars = usd*mep;
+    return `<div class="mkt-card" style="flex-direction:column;align-items:flex-start">
+      <div class="flex-between w100 mb1">
+        <div><div class="mkt-name">${i.sym}</div><div style="font-size:.8rem;color:var(--smoke3)">${i.n}</div></div>
+        <span class="mkt-pct ${chg>=0?'up':'down'}">${chg>=0?'+':''}${chg.toFixed(1)}%</span>
+      </div>
+      <div class="mkt-price">${usd?fmtUSD(usd):'Cargando...'}</div>
+      ${ars?'<div class="mkt-sub">'+fmt(ars)+' ARS (MEP)</div>':''}
+    </div>`;
+  }).join('');
+}
+
+function updateDashMkt() {
+  const el = $('dashMktCards');
+  if(!el) return;
+  const {mep,blue,btc,pfTasa} = MKT;
+  el.innerHTML = `
+    <div class="mkt-card"><div>
+      <div class="mkt-name">Dólar MEP</div>
+      <div class="mkt-price">${mep?'$'+mep.toLocaleString('es-AR'):'—'}</div>
+      <div class="mkt-sub">Tipo de cambio real</div>
+    </div><div><span class="badge b-lo">Legal</span></div></div>
+    <div class="mkt-card"><div>
+      <div class="mkt-name">Dólar Blue</div>
+      <div class="mkt-price">${blue?'$'+blue.toLocaleString('es-AR'):'—'}</div>
+      <div class="mkt-sub">Referencia paralela</div>
+    </div></div>
+    <div class="mkt-card"><div>
+      <div class="mkt-name">Bitcoin</div>
+      <div class="mkt-price">${btc?fmtUSD(btc.usd):'—'}</div>
+      <div class="mkt-sub">${btc&&mep?fmt(btc.usd*mep)+' ARS':''}</div>
+    </div>${btc?'<div><span class="mkt-pct '+(btc.usd_24h_change>=0?'up':'down')+'">'+(btc.usd_24h_change>=0?'+':'')+btc.usd_24h_change?.toFixed(1)+'%</span></div>':''}</div>
+    <div class="mkt-card"><div>
+      <div class="mkt-name">Mejor Tasa PF</div>
+      <div class="mkt-price">${pfTasa?pfTasa.toFixed(1)+'% TNA':'~27% TNA'}</div>
+      <div class="mkt-sub">Dato live BCRA</div>
+    </div><div><span class="badge b-lo">Live</span></div></div>`;
+}
+
+function updateDashRecs() {
+  const el = $('dashRecs');
+  if(!el) return;
+  const {mep,oficial,pfTasa} = MKT;
+  const spread = mep&&oficial ? ((mep-oficial)/oficial*100) : 20;
+  const pfRate = pfTasa||27;
+  const inflAnual = 0.022*12*100;
+  const rfReal = pfRate - inflAnual;
+  const recs = [];
+  if(spread < 5) recs.push({c:'s',t:'Spread MEP-Oficial muy bajo ('+spread.toFixed(0)+'%). Oportunidad para dolarizarse vía MEP.'});
+  else if(spread > 30) recs.push({c:'w',t:'Spread MEP-Oficial alto ('+spread.toFixed(0)+'%). Caro dolarizarse ahora.'});
+  recs.push({c: rfReal>0 ? 's':'w', t:'PF '+pfRate.toFixed(0)+'% TNA → Rendimiento real estimado '+(rfReal>=0?'+':'')+rfReal.toFixed(1)+'% anual.'});
+  recs.push({c:'s',t:'PF UVA: protección automática contra inflación. Mejor para horizontes 90+ días.'});
+  recs.push({c:'i',t:'CEDEARs: dolarización con acceso legal desde cualquier broker argentino.'});
+  if(STATE.profile.deuda>0) recs.push({c:'w',t:'Con deuda de tarjeta activa: cada $ que invertís en PF ('+pfRate.toFixed(0)+'%) pierde vs. la tasa de tarjeta (~180%). Pagar deuda es la mejor inversión.'});
+  el.innerHTML = recs.slice(0,4).map(r =>
+    `<div class="alert al-${r.c[0]}" style="margin:.3rem 0;padding:.6rem .85rem">${r.t}</div>`
+  ).join('');
+}
+
+function updateAISnap() {
+  const {mep,blue,btc,pfTasa,uva} = MKT;
+  const el = $('aiMktSnap');
+  if(!el) return;
+  el.innerHTML = `
+    <div class="prow"><span class="pkey">Dólar MEP</span><span class="pval gold">${mep?'$'+mep.toLocaleString('es-AR'):'—'}</span></div>
+    <div class="prow"><span class="pkey">Blue</span><span class="pval gold">${blue?'$'+blue.toLocaleString('es-AR'):'—'}</span></div>
+    <div class="prow"><span class="pkey">Mejor PF</span><span class="pval green">${pfTasa?pfTasa.toFixed(1):'~27'}% TNA</span></div>
+    <div class="prow"><span class="pkey">Bitcoin</span><span class="pval">${btc?fmtUSD(btc.usd):'—'}</span></div>
+    <div class="prow"><span class="pkey">UVA</span><span class="pval">${uva?'$'+parseFloat(uva).toFixed(2):'—'}</span></div>
+    <div class="prow"><span class="pkey">Inflación est.</span><span class="pval">~2.2%/mes</span></div>`;
+  const alertas = $('aiAlertas');
+  if(alertas) {
+    alertas.innerHTML = `
+      <div class="al-w alert" style="padding:.5rem .7rem;font-size:.72rem;margin:.2rem 0">⚡ Deuda activa = prioridad sobre inversión</div>
+      <div class="al-s alert" style="padding:.5rem .7rem;font-size:.72rem;margin:.2rem 0">✓ PF UVA disponible — protege capital</div>
+      <div class="al-i alert" style="padding:.5rem .7rem;font-size:.72rem;margin:.2rem 0">ℹ Inventario $9M = activo principal sin rendir</div>`;
+  }
+}
+
+function updateInstrAnalisis() {
+  const el = $('instrAnalisis');
+  if(!el) return;
+  const pfRate = MKT.pfTasa||27;
+  el.innerHTML = `<table class="tbl"><thead><tr>
+    <th>Horizonte</th><th>Primera opción</th><th>Segunda opción</th><th>Evitar</th></tr></thead><tbody>
+    <tr><td>1-30 días</td><td class="green">Money Market</td><td>PF Tradicional</td><td class="red">Acciones</td></tr>
+    <tr><td>30-90 días</td><td class="green">PF ${pfRate.toFixed(0)}% TNA</td><td>Lecap</td><td class="red">Cripto</td></tr>
+    <tr><td>90-365 días</td><td class="green">PF UVA</td><td>CEDEARs (30%)</td><td>—</td></tr>
+    <tr><td>+1 año</td><td class="green">CEDEARs diversif.</td><td>Merval (energía)</td><td>—</td></tr>
+  </tbody></table>`;
+}
+
+// ════════════════════════════════
+// CHARTS
+// ════════════════════════════════
+function mkChart(id, type, data, opts={}) {
+  if(charts[id]) charts[id].destroy();
+  const ctx = $(id);
+  if(!ctx) return;
+  charts[id] = new Chart(ctx, {type, data, options:{
+    responsive:true, maintainAspectRatio:true,
+    plugins:{ legend:{ labels:{ color:'#6E6760', font:{size:10}, boxWidth:10, padding:10 }}},
+    scales: type!=='pie'&&type!=='doughnut' ? {
+      x:{ grid:{color:'rgba(196,162,78,0.07)'}, ticks:{color:'#554E42',font:{size:9}} },
+      y:{ grid:{color:'rgba(196,162,78,0.07)'}, ticks:{color:'#554E42',font:{size:9}} }
+    } : undefined,
+    ...opts
+  }});
+  return charts[id];
+}
+
+function buildChartDashComp() {
+  const capital = 100000;
+  const pfRate = MKT.pfTasa||27;
+  const instruments = ['Money Market 25%','PF '+pfRate.toFixed(0)+'%','Lecap 30%','PF UVA','CEDEARs'];
+  const rates = [0.25/12, pfRate/100/12, 0.30/12, 0.022, 0.25/12];
+  const values = rates.map(r => {
+    let ac=capital; for(let i=0;i<12;i++) ac=ac*(1+r); return Math.round(ac);
+  });
+  mkChart('chartDashComp','bar',{
+    labels:instruments,
+    datasets:[{
+      label:'Total en 12 meses',
+      data:values,
+      backgroundColor:['rgba(58,110,190,.6)','rgba(196,162,78,.7)','rgba(62,158,106,.6)','rgba(62,158,106,.4)','rgba(123,78,184,.6)'],
+      borderColor:['var(--sa)','var(--au)','var(--gr)','var(--gr)','var(--pu)'],
+      borderWidth:1, borderRadius:2
+    }]
+  },{plugins:{legend:{display:false}}});
+}
+
+function buildChartInflacion() {
+  if(!MKT.inflHistorica.length) return;
+  const labels = MKT.inflHistorica.map(d => {
+    const p = d.fecha||d.date||'';
+    const parts = p.split('-');
+    return parts.length>=2 ? MESES[parseInt(parts[1])-1]+' '+parts[0].slice(2) : p;
+  });
+  const vals = MKT.inflHistorica.map(d => parseFloat(d.valor||d.value||0));
+  mkChart('chartInflacion','line',{
+    labels,
+    datasets:[{
+      label:'Inflación mensual %',
+      data:vals,
+      borderColor:'var(--cr)',
+      backgroundColor:'rgba(184,64,64,.1)',
+      tension:.4, fill:true, pointRadius:3, pointBackgroundColor:'var(--cr)'
+    }]
+  });
+}
+
+function buildChartMercadoComp() {
+  const capital = 100000;
+  const pfRate = MKT.pfTasa||27;
+  const inflMensual = 0.022;
+  const instrs = [
+    {n:'MM 25%',t:0.25/12,c:'rgba(58,110,190,.7)'},
+    {n:'PF '+pfRate.toFixed(0)+'%',t:pfRate/100/12,c:'rgba(196,162,78,.8)'},
+    {n:'Lecap 30%',t:0.30/12,c:'rgba(62,158,106,.7)'},
+    {n:'PF UVA',t:inflMensual,c:'rgba(62,158,106,.5)'},
+    {n:'Inflación (no invertir)',t:0,c:'rgba(184,64,64,.5)'},
+  ];
+  const labels = Array.from({length:13},(_,i)=>i===0?'Hoy':MESES[i-1]);
+  const datasets = instrs.map(i => {
+    const data = [capital];
+    let ac=capital;
+    for(let m=0;m<12;m++){ac=ac*(1+i.t);data.push(Math.round(ac));}
+    return {label:i.n,data,borderColor:i.c,backgroundColor:'transparent',tension:.3,pointRadius:2,borderWidth:2};
+  });
+  // Add inflation erosion
+  const inflData=[capital];let ac=capital;
+  for(let m=0;m<12;m++){ac=ac*(1+inflMensual);inflData.push(Math.round(capital-(ac-capital)*0.3));}
+  mkChart('chartMercadoComp','line',{labels,datasets});
+}
+
+function buildCryptoCharts() {
+  ['BTC','ETH'].forEach(sym => {
+    const hist = sym==='BTC' ? MKT.btcHist : MKT.ethHist;
+    if(!hist.length) return;
+    const labels = hist.map(([ts]) => {const d=new Date(ts);return d.getDate()+'/'+( d.getMonth()+1);});
+    const prices = hist.map(([,p]) => p.toFixed(2));
+    const color = sym==='BTC' ? 'rgba(184,120,40,.8)' : 'rgba(58,110,190,.8)';
+    mkChart('chart'+sym,'line',{
+      labels,
+      datasets:[{label:sym+' USD',data:prices,borderColor:color,backgroundColor:color.replace('.8','.1'),
+        tension:.4,fill:true,pointRadius:2,borderWidth:2}]
+    });
+  });
+}
+
+// ════════════════════════════════
+// PROFILE
+// ════════════════════════════════
+function pIng() { const p=STATE.profile; return (p.sueldo||0)+(p.local||0)+(p.otros||0); }
+function pGas() { const p=STATE.profile; return (p.alqviv||0)+(p.alqloc||0)+(p.comida||0)+(p.serv||0)+(p.movil||0); }
+
+function saveProfile() {
+  STATE.profile = {
+    sueldo:+$('p-sueldo').value||0, local:+$('p-local').value||0, otros:+$('p-otros').value||0,
+    alqviv:+$('p-alqviv').value||0, alqloc:+$('p-alqloc').value||0, comida:+$('p-comida').value||0,
+    serv:+$('p-serv').value||0, movil:+$('p-movil').value||0,
+    deuda:+$('p-deuda').value||0, ahpesos:+$('p-ahpesos').value||0, ahusd:+$('p-ahusd').value||0,
+    inventario:+$('p-inventario').value||9000000,
+    riesgo:$('p-riesgo').value, horizonte:$('p-horizonte').value,
+    objetivo:$('p-objetivo').value, broker:$('p-broker').value,
+    metaahorro:+$('p-metaahorro').value||0,
+  };
+  save();
+  calcHealth();
+  $('profileStatus').innerHTML = '<span style="color:var(--gr)">✓ Guardado — la app usa estos datos</span>';
+  if(STATE.profile.deuda>STATE.profile.sueldo*2) $('deudaBadge').style.display='';
+}
+
+function loadProfile() {
+  const p = STATE.profile;
+  if(!p.sueldo&&!p.local) return;
+  const set=(id,v)=>{const e=$(id);if(e&&v)e.value=v;};
+  set('p-sueldo',p.sueldo);set('p-local',p.local);set('p-otros',p.otros);
+  set('p-alqviv',p.alqviv);set('p-alqloc',p.alqloc);set('p-comida',p.comida);
+  set('p-serv',p.serv);set('p-movil',p.movil);
+  set('p-deuda',p.deuda);set('p-ahpesos',p.ahpesos);set('p-ahusd',p.ahusd);
+  set('p-inventario',p.inventario);
+  if(p.riesgo) $('p-riesgo').value=p.riesgo;
+  if(p.horizonte) $('p-horizonte').value=p.horizonte;
+  if(p.objetivo) $('p-objetivo').value=p.objetivo;
+  if(p.broker) $('p-broker').value=p.broker;
+  set('p-metaahorro',p.metaahorro);
+}
+
+function calcHealth() {
+  const p=STATE.profile;
+  if(!p.sueldo&&!p.local) return;
+  const ing=pIng(), gas=pGas(), deuda=p.deuda||0, libre=ing-gas;
+  const colchon=p.ahpesos||0;
+  let score=0, det=[];
+  const rGas=gas/ing;
+  if(rGas<0.5){score+=25;det.push({t:'✓ Gastos bajo control ('+pctAbs(rGas)+')',c:'green'});}
+  else if(rGas<0.7){score+=12;det.push({t:'⚡ Gastos al '+pctAbs(rGas)+' de ingresos',c:'amber'});}
+  else{score+=0;det.push({t:'✗ Gastos críticos ('+pctAbs(rGas)+')',c:'red'});}
+  if(deuda===0){score+=25;det.push({t:'✓ Sin deudas de tarjeta',c:'green'});}
+  else if(deuda<ing*2){score+=10;det.push({t:'⚡ Deuda manejable ('+fmt(deuda)+')',c:'amber'});}
+  else{score+=0;det.push({t:'✗ Deuda alta — prioridad #1',c:'red'});}
+  if(colchon>gas*3){score+=25;det.push({t:'✓ Colchón de 3+ meses',c:'green'});}
+  else if(colchon>gas){score+=12;det.push({t:'⚡ Colchón parcial',c:'amber'});}
+  else{score+=3;det.push({t:'✗ Sin colchón de emergencia',c:'red'});}
+  if(libre>ing*0.25){score+=25;det.push({t:'✓ Flujo libre saludable ('+pctAbs(libre/ing)+')',c:'green'});}
+  else if(libre>0){score+=12;det.push({t:'⚡ Flujo ajustado ('+fmt(libre)+'/mes)',c:'amber'});}
+  else{score+=0;det.push({t:'✗ Flujo negativo',c:'red'});}
+  const color=score>=70?'var(--gr)':score>=45?'var(--am)':'var(--cr)';
+  const circ=2*Math.PI*42;
+  const arc=$('healthArc');
+  if(arc){arc.setAttribute('stroke-dasharray',`${score/100*circ} ${circ-score/100*circ}`);arc.setAttribute('stroke',color);}
+  if($('healthNum')) $('healthNum').innerHTML=`<span style="color:${color};font-family:var(--serif);font-size:1.7rem;font-weight:700">${score}</span>`;
+  if($('healthLabel')) $('healthLabel').textContent=score>=70?'Saludable':score>=45?'Ajustado':'En riesgo';
+  if($('healthDetails')) $('healthDetails').innerHTML=det.map(d=>`<div style="color:var(--${d.c==='green'?'gr':d.c==='red'?'cr':'am'});margin-bottom:.15rem;font-size:.73rem">${d.t}</div>`).join('');
+}
+
+// ════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════
+function renderDashboard() {
+  calcHealth();
+  const p=STATE.profile;
+  const ing=pIng(), gas=pGas(), deuda=p.deuda||0;
+  const el=$('dashResumen');
+  if(el&&ing>0){
+    el.innerHTML=`
+      <div class="prow"><span class="pkey">Ingresos totales</span><span class="pval gold">${fmt(ing)}</span></div>
+      <div class="prow"><span class="pkey">Gastos fijos</span><span class="pval red">${fmt(gas)}</span></div>
+      <div class="prow"><span class="pkey">Dinero libre</span><span class="pval ${ing-gas>0?'green':'red'}">${fmt(ing-gas)}</span></div>
+      <div class="prow"><span class="pkey">Deuda tarjetas</span><span class="pval red">${fmt(deuda)}</span></div>
+      <div class="prow"><span class="pkey">Inventario Woden</span><span class="pval gold">${fmt(p.inventario||9000000)}</span></div>
+      <div class="prow"><span class="pkey">Colchón actual</span><span class="pval">${fmt(p.ahpesos||0)}</span></div>`;
+  }
+  const brief=$('dashBriefText');
+  if(brief){
+    const pfRate=MKT.pfTasa||27;
+    brief.innerHTML=`Mercado operando con normalidad. Dólar MEP ${MKT.mep?'$'+MKT.mep.toLocaleString('es-AR'):'estable'}. 
+    Mejor tasa disponible: <strong>Lecap ~30% TNA</strong> y PF UVA para protección real.
+    ${deuda>0?`<br><strong>Situación deuda:</strong> Con ${fmt(deuda)} activos en tarjetas, la prioridad es pagar antes de invertir.`:''}
+    <br>Para <strong>Casa Woden</strong>: inventario disponible de ${fmt(p.inventario||9000000)}. 
+    El activo más subutilizado es ese stock — cada pieza que no rotas es capital muerto al ${pfRate.toFixed(0)}% TNA parado en percha.`;
+  }
+}
+
+// ════════════════════════════════
+// DISTRIBUCIÓN
+// ════════════════════════════════
+function syncDistProfile() {
+  const p=STATE.profile;
+  if(!p.sueldo&&!p.local) return;
+  if($('d-ing')&&!$('d-ing').value) $('d-ing').value=pIng()||'';
+  if($('d-gas')&&!$('d-gas').value) $('d-gas').value=pGas()||'';
+  if($('d-deuda')&&!$('d-deuda').value) $('d-deuda').value=p.deuda||'';
+  calcDist();
+}
+
+function calcDist() {
+  const ing=+$('d-ing').value||0,gas=+$('d-gas').value||0;
+  const deuda=+$('d-deuda').value||0,colchon=+$('d-colchon').value||0;
+  const metodo=$('d-metodo').value;
+  if(ing<100){$('distResult').innerHTML='<div class="eyebrow mb2">Distribución</div><div class="text-sm text-muted">Ingresá tus números</div>';return;}
+  const libre=ing-gas;
+  const intDeuda=deuda*(1.8/12);
+  const metaColchon=gas*3, colchonFalta=Math.max(0,metaColchon-colchon);
+  let bolsillos=[];
+  if(metodo==='503020'){
+    bolsillos=[
+      {l:'🏠 Necesidades (50%)',v:ing*.50,c:'var(--cr)'},
+      {l:'🎯 Deseos (30%)',v:ing*.30,c:'var(--sa)'},
+      {l:'💰 Ahorro / inversión (20%)',v:ing*.20,c:'var(--gr)'},
+    ];
+  } else if(metodo==='sobres'){
+    bolsillos=[
+      {l:'📦 Gastos fijos',v:gas,c:'var(--cr)'},
+      {l:'🛒 Comida semanal',v:ing*.12,c:'var(--am)'},
+      {l:'💳 Deuda tarjetas',v:Math.min(libre*.35,libre*.40),c:'var(--am)'},
+      {l:'✨ Ocio / personal',v:ing*.06,c:'var(--sa)'},
+      {l:'💰 Ahorro',v:Math.max(0,libre-libre*.35-ing*.12-ing*.06),c:'var(--gr)'},
+    ];
+  } else {
+    const pDeuda=libre>0?Math.min(libre*.40,Math.max(intDeuda*1.5,libre*.25)):0;
+    const pColchon=colchonFalta>0?Math.min(libre*.12,colchonFalta/6):0;
+    const pInv=libre>pDeuda+pColchon?(libre-pDeuda-pColchon)*.35:0;
+    const pPers=Math.max(0,libre-pDeuda-pColchon-pInv);
+    bolsillos=[
+      {l:'🏠 Gastos fijos',v:gas,c:'var(--cr)'},
+      {l:'💳 Ataque deuda',v:pDeuda,c:'var(--am)'},
+      {l:'🔐 Colchón emergencia',v:pColchon,c:'var(--sa)'},
+      {l:'📈 Inversión',v:pInv,c:'var(--gr)'},
+      {l:'👤 Gasto personal',v:pPers,c:'var(--smoke4)'},
+    ];
+  }
+  const rGas=gas/ing;
+  const alertHTML=rGas>.80?'<div class="alert al-d">⚠️ Gastos fijos ('+pctAbs(rGas)+') consumen casi todo el ingreso. Situación crítica.</div>':
+    rGas>.65?'<div class="alert al-w">⚡ Gastos al '+pctAbs(rGas)+'. Cada peso extra cuenta.</div>':
+    deuda>ing*2?'<div class="alert al-w">💳 Deuda alta. Prioridad: pagar tarjetas antes que invertir.</div>':
+    '<div class="alert al-s">✓ Estructura manejable. Seguí el plan consistentemente.</div>';
+  $('distAlert').innerHTML=alertHTML;
+  $('distResult').innerHTML=`<div class="eyebrow mb2">Distribución — ${fmt(ing)}/mes</div>
+    <div class="bar-chart mb3">${bolsillos.map(b=>`
+      <div class="bar-row">
+        <div class="bar-label">${b.l}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,(b.v/ing)*100)}%;background:${b.c}"></div></div>
+        <div class="bar-amt" style="color:${b.c}">${fmt(b.v)}</div>
+      </div>`).join('')}
+    </div>
+    <div class="prow total"><span class="pkey bold">Total</span><span class="pval bold gold">${fmt(bolsillos.reduce((a,b)=>a+b.v,0))}</span></div>`;
+
+  // Donut chart
+  if(charts['chartDist']) charts['chartDist'].destroy();
+  const ctx=$('chartDist');
+  if(ctx){
+    charts['chartDist']=new Chart(ctx,{type:'doughnut',data:{
+      labels:bolsillos.map(b=>b.l.replace(/^[^\s]+ /,'')),
+      datasets:[{data:bolsillos.map(b=>Math.round(b.v)),
+        backgroundColor:bolsillos.map(b=>b.c.replace(')',',0.7)').replace('var(--cr)','rgba(184,64,64,0.7)').replace('var(--am)','rgba(184,120,40,0.7)').replace('var(--sa)','rgba(58,110,190,0.7)').replace('var(--gr)','rgba(62,158,106,0.7)').replace('var(--smoke4)','rgba(110,103,96,0.7)')),
+        borderWidth:0}]},
+      options:{responsive:true,maintainAspectRatio:true,
+        plugins:{legend:{position:'bottom',labels:{color:'#6E6760',font:{size:9},boxWidth:10,padding:8}}}}});
+  }
+
+  // Timeline
+  if(deuda>0&&libre>0){
+    const pMensual=bolsillos.find(b=>b.l.includes('deuda'))?.v||libre*.35;
+    const meses=Math.ceil(deuda/pMensual);
+    const fecha=new Date();fecha.setMonth(fecha.getMonth()+meses);
+    $('distTimelineContent').innerHTML=`
+      <div class="prow"><span class="pkey">Libre de deuda</span><span class="pval gold">${fecha.toLocaleDateString('es-AR',{month:'long',year:'numeric'})}</span></div>
+      <div class="prow"><span class="pkey">En</span><span class="pval">${meses} meses</span></div>
+      <div class="prow"><span class="pkey">Colchón 3 meses en</span><span class="pval">${colchonFalta>0?Math.ceil(colchonFalta/(libre*.12))+' meses':'Ya cubierto ✓'}</span></div>`;
+  }
+}
+
+// ════════════════════════════════
+// AHORRO
+// ════════════════════════════════
+function calcAhorro() {
+  const tipo=$('a-tipo').value, mensual=+$('a-mensual').value||0, actual=+$('a-actual').value||0;
+  const instr=$('a-instr').value;
+  let meta=+$('a-meta').value||0;
+  const gas=pGas()||840000;
+  if(tipo==='colchon') meta=gas*3;
+  else if(tipo==='inversion') meta=1000000;
+  if($('a-meta')&&tipo!=='libre') $('a-meta').value=meta;
+  if(!mensual||!meta) return;
+  const tasas={mm:0.25/12,pf27:0.27/12,uva:0.022,lecap:0.30/12};
+  const tasa=tasas[instr]||0.27/12;
+  let ac=actual,meses=0;
+  const dataProy=[actual];
+  while(ac<meta&&meses<120){ac=ac*(1+tasa)+mensual;meses++;dataProy.push(Math.round(ac));}
+  const ganIntereses=ac-actual-mensual*meses;
+  const fecha=new Date();fecha.setMonth(fecha.getMonth()+meses);
+  $('ahorroResult').innerHTML=`<div class="eyebrow mb2">Tu Plan de Ahorro</div>
+    <div class="g2 mb3" style="gap:.6rem">
+      <div class="card card-sm"><div class="eyebrow">Meta</div><div class="big-val sm gold">${fmt(meta)}</div></div>
+      <div class="card card-sm"><div class="eyebrow">Lo lográs en</div><div class="big-val sm white">${meses} meses</div></div>
+    </div>
+    <div class="prow"><span class="pkey">Fecha estimada</span><span class="pval gold">${fecha.toLocaleDateString('es-AR',{month:'long',year:'numeric'})}</span></div>
+    <div class="prow"><span class="pkey">Total aportado</span><span class="pval">${fmt(mensual*meses)}</span></div>
+    <div class="prow"><span class="pkey">Intereses ganados</span><span class="pval green">+${fmt(ganIntereses)}</span></div>
+    <div class="prow total"><span class="pkey bold">Total acumulado</span><span class="pval bold gold">${fmt(ac)}</span></div>`;
+  // Chart
+  const labels=Array.from({length:dataProy.length},(_,i)=>i===0?'Hoy':i%3===0?MESES[(new Date().getMonth()+i)%12]:'');
+  if(charts['chartAhorro']) charts['chartAhorro'].destroy();
+  const ctx=$('chartAhorro');
+  if(ctx){
+    charts['chartAhorro']=new Chart(ctx,{type:'line',data:{labels,datasets:[
+      {label:'Ahorro acumulado',data:dataProy,borderColor:'var(--gr)',backgroundColor:'rgba(62,158,106,.1)',tension:.4,fill:true,pointRadius:1,borderWidth:2},
+      {label:'Meta',data:Array(dataProy.length).fill(meta),borderColor:'rgba(196,162,78,.5)',borderDash:[5,5],pointRadius:0,borderWidth:1}
+    ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#6E6760',font:{size:9},boxWidth:10}}},
+      scales:{x:{grid:{color:'rgba(196,162,78,.07)'},ticks:{color:'#554E42',font:{size:8}}},y:{grid:{color:'rgba(196,162,78,.07)'},ticks:{color:'#554E42',font:{size:8}}}}}});
+  }
+  // Comparativa
+  const instrsComp=[{n:'MM 25%',t:0.25/12},{n:'PF 27%',t:0.27/12},{n:'Lecap 30%',t:0.30/12},{n:'UVA ~26%',t:0.022}];
+  $('ahorroCompContent').innerHTML=`<table class="tbl"><thead><tr><th>Instrumento</th><th>Meses para meta</th><th>Intereses ganados</th></tr></thead><tbody>
+    ${instrsComp.map(i=>{let a=actual,m=0;while(a<meta&&m<120){a=a*(1+i.t)+mensual;m++;}const int=a-actual-mensual*m;
+      return `<tr><td>${i.n}</td><td class="mono">${m}</td><td class="mono green">+${fmt(int)}</td></tr>`;}).join('')}
+  </tbody></table>`;
+}
+
+// ════════════════════════════════
+// DEUDAS
+// ════════════════════════════════
+function addDeuda() {
+  const nombre=$('dt-nombre').value||'Tarjeta',total=+$('dt-total').value||0;
+  const min=+$('dt-min').value||0,tasa=+$('dt-tasa').value||180;
+  if(!total) return;
+  STATE.debts.push({id:Date.now(),nombre,total,original:total,min,tasa});
+  save();renderDeudas();
+  ['dt-nombre','dt-total','dt-min','dt-tasa'].forEach(id=>{const e=$(id);if(e)e.value='';});
+}
+
+function removeDeuda(id){STATE.debts=STATE.debts.filter(d=>d.id!==id);save();renderDeudas();}
+
+function renderDeudas() {
+  const extra=+$('dt-extra')?.value||0;
+  const estrategia=$('dt-estrategia')?.value||'avalancha';
+  const totalD=STATE.debts.reduce((a,d)=>a+d.total,0);
+  const totalInt=STATE.debts.reduce((a,d)=>a+d.total*(d.tasa/100/12),0);
+  $('dtTotal').textContent=fmt(totalD);
+  $('dtInteres').textContent=fmt(totalInt);
+  if(!STATE.debts.length){$('deudasList').innerHTML='<div class="eyebrow mb2">Mis Deudas</div><div class="text-sm text-muted">Agregá tu primera tarjeta →</div>';return;}
+  $('deudasList').innerHTML=`<div class="eyebrow mb2">Mis Deudas</div>`+STATE.debts.map(d=>{
+    const intM=d.total*(d.tasa/100/12);
+    const noCubre=d.min<=intM;
+    const prog=Math.min(100,(d.original-d.total)/d.original*100);
+    return `<div class="card card-sm mb2" style="background:var(--ink4)">
+      <div class="flex-between mb1">
+        <div><strong style="font-size:.82rem">${d.nombre}</strong><span class="text-xs text-muted" style="margin-left:.5rem">${d.tasa}% TNA</span></div>
+        <button class="btn btn-d btn-sm" onclick="removeDeuda(${d.id})">✕</button>
+      </div>
+      <div class="stat-bar mb1" style="gap:1rem">
+        <div class="stat"><div class="stat-label">Deuda</div><div class="stat-val red">${fmt(d.total)}</div></div>
+        <div class="stat"><div class="stat-label">Mínimo</div><div class="stat-val">${fmt(d.min)}</div></div>
+        <div class="stat"><div class="stat-label">Interés/mes</div><div class="stat-val" style="color:var(--am)">${fmt(intM)}</div></div>
+      </div>
+      ${noCubre?'<div class="alert al-d" style="padding:.4rem .6rem;font-size:.7rem;margin:.3rem 0">El mínimo no cubre el interés. La deuda crece cada mes.</div>':''}
+      <div style="height:3px;background:var(--ink5);border-radius:2px;overflow:hidden"><div style="height:100%;background:${prog>0?'var(--gr)':'var(--cr)'};width:${prog}%;border-radius:2px"></div></div>
+    </div>`;
+  }).join('');
+
+  // Plan
+  const sorted=[...STATE.debts].sort((a,b)=>estrategia==='avalancha'?b.tasa-a.tasa:a.total-b.total);
+  $('dtPlanNombre').textContent=estrategia==='avalancha'?'Avalancha':'Bola de Nieve';
+
+  // Proyección chart
+  const labels=[]; const dataDeuda=[];
+  let saldoTotal=totalD;
+  for(let m=0;m<=24&&saldoTotal>0;m++){
+    labels.push(m===0?'Hoy':m%3===0?'Mes '+m:'');
+    dataDeuda.push(Math.round(saldoTotal));
+    sorted.forEach((d,i)=>{
+      const pago=i===0?d.min+extra:d.min;
+      saldoTotal-=Math.max(0,pago-d.total*(d.tasa/100/12));
+    });
+    saldoTotal=Math.max(0,saldoTotal);
+  }
+  if(!dataDeuda[dataDeuda.length-1]) dataDeuda[dataDeuda.length-1]=0;
+  if(charts['chartDeuda']) charts['chartDeuda'].destroy();
+  const ctx=$('chartDeuda');
+  if(ctx) charts['chartDeuda']=new Chart(ctx,{type:'line',data:{labels,datasets:[{
+    label:'Deuda restante',data:dataDeuda,borderColor:'var(--cr)',backgroundColor:'rgba(184,64,64,.1)',
+    tension:.4,fill:true,pointRadius:1,borderWidth:2}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(196,162,78,.07)'},ticks:{color:'#554E42',font:{size:8}}},
+        y:{grid:{color:'rgba(196,162,78,.07)'},ticks:{color:'#554E42',font:{size:8},callback:v=>fmt(v)}}}}});
+
+  const planRows=sorted.map((d,i)=>{
+    const pago=i===0?d.min+extra:d.min;
+    const intM=d.total*(d.tasa/100/12);
+    let s=d.total,meses=0;while(s>0&&meses<360){s=s*(1+d.tasa/100/12)-pago;meses++;}
+    return `<tr><td class="mono gold">#${i+1}</td><td><strong>${d.nombre}</strong></td>
+      <td class="mono red">${d.tasa}%</td><td class="mono">${fmt(pago)}</td>
+      <td class="mono ${meses>=360?'red':'green'}">${meses>=360?'∞ insuf.':meses+' meses'}</td></tr>`;
+  }).join('');
+  $('dtPlan').innerHTML=`<table class="tbl"><thead><tr><th>#</th><th>Deuda</th><th>Tasa</th><th>Pago/mes</th><th>Meses</th></tr></thead><tbody>${planRows}</tbody></table>
+    ${extra===0?'<div class="alert al-w mt2" style="font-size:.75rem">Agregá un monto extra para acelerar la salida de deuda.</div>':''}`;
+}
+
+// ════════════════════════════════
+// PATRIMONIO NETO
+// ════════════════════════════════
+function calcPatrimonio() {
+  const activos=(['pn-efectivo','pn-ahpesos','pn-dolares','pn-inventario','pn-inversiones','pn-otros'].reduce((a,id)=>a+(+$(id)?.value||0),0));
+  const pasivos=(['pn-dtarjetas','pn-prestamos','pn-otras'].reduce((a,id)=>a+(+$(id)?.value||0),0));
+  const neto=activos-pasivos;
+  $('pnActivos').textContent=fmt(activos);$('pnPasivos').textContent=fmt(pasivos);
+  $('pnNeto').textContent=fmt(neto);
+  $('pnNeto').style.color=neto>0?'var(--gr)':neto<0?'var(--cr)':'var(--am)';
+  $('pnCaption').textContent=neto>0?'Patrimonio positivo — vas bien':'Patrimonio negativo — deudas superan activos';
+}
+
+function guardarPatrimonio() {
+  const activos=(['pn-efectivo','pn-ahpesos','pn-dolares','pn-inventario','pn-inversiones','pn-otros'].reduce((a,id)=>a+(+$(id)?.value||0),0));
+  const pasivos=(['pn-dtarjetas','pn-prestamos','pn-otras'].reduce((a,id)=>a+(+$(id)?.value||0),0));
+  const snap={fecha:new Date().toISOString().slice(0,10),activos,pasivos,neto:activos-pasivos};
+  STATE.patrimonyHistory.push(snap);save();renderPatrimony();
+}
+
+function renderPatrimony() {
+  const hist=STATE.patrimonyHistory;
+  if(!hist.length){$('pnHistorial').innerHTML='<div class="text-sm text-muted">Guardá tu primer snapshot para empezar a traquear.</div>';return;}
+  $('pnHistorial').innerHTML=`<table class="tbl"><thead><tr><th>Fecha</th><th>Activos</th><th>Pasivos</th><th>Neto</th></tr></thead><tbody>
+    ${hist.slice(-10).reverse().map(s=>`<tr><td class="mono">${s.fecha}</td><td class="mono green">${fmt(s.activos)}</td><td class="mono red">${fmt(s.pasivos)}</td><td class="mono ${s.neto>=0?'green':'red'}">${fmt(s.neto)}</td></tr>`).join('')}
+  </tbody></table>`;
+  if(charts['chartPatrimonio']) charts['chartPatrimonio'].destroy();
+  const ctx=$('chartPatrimonio');
+  if(ctx&&hist.length>1){
+    charts['chartPatrimonio']=new Chart(ctx,{type:'line',data:{
+      labels:hist.map(s=>s.fecha.slice(5)),
+      datasets:[
+        {label:'Activos',data:hist.map(s=>s.activos),borderColor:'var(--gr)',backgroundColor:'rgba(62,158,106,.1)',tension:.4,fill:false,borderWidth:2,pointRadius:3},
+        {label:'Pasivos',data:hist.map(s=>s.pasivos),borderColor:'var(--cr)',backgroundColor:'transparent',tension:.4,borderDash:[5,3],borderWidth:1,pointRadius:2},
+        {label:'Patrimonio Neto',data:hist.map(s=>s.neto),borderColor:'var(--au)',backgroundColor:'rgba(196,162,78,.1)',tension:.4,fill:true,borderWidth:2,pointRadius:3},
+      ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#6E6760',font:{size:9},boxWidth:10}}},
+        scales:{x:{grid:{color:'rgba(196,162,78,.07)'},ticks:{color:'#554E42',font:{size:8}}},
+          y:{grid:{color:'rgba(196,162,78,.07)'},ticks:{color:'#554E42',font:{size:8},callback:v=>fmt(v)}}}}});
+  }
+}
+
+// ════════════════════════════════
+// INVERTIR
+// ════════════════════════════════
+function syncInvProfile(){
+  const p=STATE.profile;if(!p.sueldo&&!p.local)return;
+  if($('inv-deuda')&&!$('inv-deuda').value)$('inv-deuda').value=p.deuda||'';
+  if($('inv-colchon')&&!$('inv-colchon').value)$('inv-colchon').value=p.ahpesos||'';
+  if($('inv-gastos')&&!$('inv-gastos').value)$('inv-gastos').value=pGas()||'';
+  if(p.riesgo)$('inv-riesgo').value=p.riesgo;
+  if(p.horizonte)$('inv-horizonte').value=p.horizonte;
+}
+
+function calcInvertir() {
+  const capital=+$('inv-capital').value||0,deuda=+$('inv-deuda').value||0;
+  const colchon=+$('inv-colchon').value||0,gastos=+$('inv-gastos').value||0;
+  const riesgo=$('inv-riesgo').value,horizonte=$('inv-horizonte').value;
+  const metaColchon=gastos*3,colchonFalta=Math.max(0,metaColchon-colchon);
+  let decision,alertClass,accion;
+  if(deuda>0&&deuda>capital*2){
+    decision='Pagar deuda primero';alertClass='al-d';
+    accion=`Con ${fmt(deuda)} en tarjetas a ~180% TNA, cualquier inversión en pesos pierde. La mejor inversión hoy es cancelar deuda. Rendimiento garantizado = tasa que dejás de pagar.`;
+  } else if(colchon<gastos){
+    decision='Armá el colchón primero';alertClass='al-w';
+    accion=`No tenés colchón. Sin reserva, cualquier imprevisto te endeuda. Guardá ${fmt(Math.min(capital,gastos-colchon))} en Money Market antes de invertir en otra cosa.`;
+  } else if(capital<30000){
+    decision='Acumulá más capital';alertClass='al-w';
+    accion='Con menos de $30k es difícil diversificar. Acumulá en Money Market hasta llegar a $150-200k como base de inversión.';
+  } else {
+    decision='Condiciones OK — invertí';alertClass='al-s';
+    accion=`Tenés ${fmt(capital)} disponibles, colchón cubierto y deuda bajo control. Este capital está listo para trabajar.`;
+  }
+  $('invDecision').innerHTML=`<div class="eyebrow mb2">¿Conviene invertir ahora?</div>
+    <div class="alert ${alertClass}"><strong>${decision}</strong><br>${accion}</div>
+    <div class="prow mt2"><span class="pkey">Capital disponible</span><span class="pval gold">${fmt(capital)}</span></div>
+    <div class="prow"><span class="pkey">Colchón cubierto</span><span class="pval ${colchon>=gastos?'green':'red'}">${colchon>=gastos?'✓ SÍ':'✗ NO — faltan '+fmt(colchonFalta)}</span></div>
+    <div class="prow"><span class="pkey">Deuda cara activa</span><span class="pval ${deuda>0?'red':'green'}">${deuda>0?'✗ '+fmt(deuda):'✓ Ninguna'}</span></div>`;
+
+  if(capital<1000)return;
+  const portfolios={
+    conservador:[{n:'PF UVA',p:.50,c:'rgba(62,158,106,.7)'},{n:'Money Market',p:.30,c:'rgba(58,110,190,.7)'},{n:'Dólar MEP',p:.20,c:'rgba(196,162,78,.7)'}],
+    moderado:[{n:'PF UVA',p:.30,c:'rgba(62,158,106,.7)'},{n:'Lecaps',p:.25,c:'rgba(58,110,190,.7)'},{n:'MEP / CEDEARs',p:.30,c:'rgba(196,162,78,.7)'},{n:'Merval',p:.15,c:'rgba(123,78,184,.7)'}],
+    agresivo:[{n:'CEDEARs',p:.35,c:'rgba(58,110,190,.7)'},{n:'Merval (YPF/Galicia)',p:.25,c:'rgba(196,162,78,.7)'},{n:'MEP',p:.20,c:'rgba(62,158,106,.7)'},{n:'Lecaps',p:.12,c:'rgba(62,158,106,.5)'},{n:'Cripto (BTC)',p:.08,c:'rgba(184,64,64,.7)'}]
+  };
+  const ptf=portfolios[riesgo]||portfolios.moderado;
+  $('invPortContent').innerHTML=`<div class="bar-chart mb2">${ptf.map(p=>`
+    <div class="bar-row narrow">
+      <div class="bar-label">${p.n}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${p.p*100}%;background:${p.c}"></div></div>
+      <div class="bar-amt">${fmt(capital*p.p)}</div>
+    </div>`).join('')}</div>`;
+
+  if(charts['chartPortfolio']) charts['chartPortfolio'].destroy();
+  const ctx=$('chartPortfolio');
+  if(ctx) charts['chartPortfolio']=new Chart(ctx,{type:'doughnut',data:{
+    labels:ptf.map(p=>p.n),
+    datasets:[{data:ptf.map(p=>Math.round(capital*p.p)),backgroundColor:ptf.map(p=>p.c),borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{color:'#6E6760',font:{size:9},boxWidth:10,padding:8}}}}});
+}
+
+// ════════════════════════════════
+// PROYECCIONES
+// ════════════════════════════════
+function calcProy() {
+  const capital=+$('py-capital').value||0,aporte=+$('py-aporte').value||0;
+  const plazo=+$('py-plazo').value||12,instr=$('py-instr').value;
+  const inflMes=(+$('py-infl').value||2.2)/100;
+  if(!capital) return;
+  const tasas={pf27:0.27/12,uva:0.022,lecap:0.30/12,mm:0.25/12,mep:0,cedear:0.25/12,merval:0.40/12,btc:0.30/12};
+  const tasa=tasas[instr]||0;
+  const data=[capital];let ac=capital;
+  const dataReal=[capital];let acReal=capital;
+  for(let m=0;m<plazo;m++){
+    ac=ac*(1+tasa)+aporte;data.push(Math.round(ac));
+    acReal=acReal*(1+tasa-inflMes)+aporte;dataReal.push(Math.round(acReal));
+  }
+  const ganancia=ac-capital-aporte*plazo;
+  const rNom=(ac/capital-1)*100;
+  const inflAcum=(Math.pow(1+inflMes,plazo)-1)*100;
+  const rReal=rNom-inflAcum;
+  $('proyResult').innerHTML=`<div class="eyebrow mb2">Resultado</div>
+    <div class="big-val vg green mb2">${fmt(Math.round(ac))}</div>
+    <div class="prow"><span class="pkey">Capital inicial</span><span class="pval">${fmt(capital)}</span></div>
+    ${aporte>0?`<div class="prow"><span class="pkey">Aportes totales</span><span class="pval">${fmt(aporte*plazo)}</span></div>`:''}
+    <div class="prow"><span class="pkey">Intereses</span><span class="pval green">+${fmt(ganancia)}</span></div>
+    <div class="prow"><span class="pkey">Nominal</span><span class="pval green">+${rNom.toFixed(1)}%</span></div>
+    <div class="prow"><span class="pkey">Inflación acumulada</span><span class="pval red">+${inflAcum.toFixed(1)}%</span></div>
+    <div class="prow total"><span class="pkey bold">Rendimiento real</span><span class="pval bold ${rReal>0?'green':'red'}">${rReal>0?'+':''}${rReal.toFixed(1)}%</span></div>`;
+  const labels=Array.from({length:plazo+1},(_,i)=>i===0?'Hoy':i%Math.max(1,Math.round(plazo/6))===0?'Mes '+i:'');
+  if(charts['chartProy']) charts['chartProy'].destroy();
+  const ctx=$('chartProy');
+  if(ctx) charts['chartProy']=new Chart(ctx,{type:'line',data:{labels,datasets:[
+    {label:'Capital nominal',data,borderColor:'var(--au)',backgroundColor:'rgba(196,162,78,.1)',tension:.4,fill:true,pointRadius:1,borderWidth:2},
+    {label:'Capital real (post-inflación)',data:dataReal,borderColor:'var(--gr)',backgroundColor:'transparent',tension:.4,pointRadius:1,borderWidth:1.5,borderDash:[4,3]},
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#6E6760',font:{size:9},boxWidth:10}}},
+    scales:{x:{grid:{color:'rgba(196,162,78,.07)'},ticks:{color:'#554E42',font:{size:8}}},
+      y:{grid:{color:'rgba(196,162,78,.07)'},ticks:{color:'#554E42',font:{size:8},callback:v=>fmt(v)}}}}});
+  // Comparativa
+  const todos=[
+    {n:'MM 25%',t:0.25/12},{n:'PF 27%',t:0.27/12},{n:'Lecap 30%',t:0.30/12},
+    {n:'PF UVA',t:inflMes},{n:'CEDEARs USD',t:0.25/12},{n:'Merval ARG',t:0.40/12},
+  ];
+  $('proyComparativa').innerHTML=`<table class="tbl"><thead><tr><th>Instrumento</th><th>Total</th><th>Ganancia</th><th>Nominal</th><th>Real</th></tr></thead><tbody>
+    ${todos.map(i=>{let a=capital;for(let m=0;m<plazo;m++)a=a*(1+i.t)+aporte;
+      const g=a-capital-aporte*plazo,rn=(a/capital-1)*100,rr=rn-inflAcum;
+      return `<tr><td>${i.n}</td><td class="mono gold">${fmt(Math.round(a))}</td><td class="mono green">+${fmt(g)}</td>
+        <td class="mono">+${rn.toFixed(1)}%</td><td class="mono ${rr>0?'green':'red'}">${rr>0?'+':''}${rr.toFixed(1)}%</td></tr>`;}).join('')}
+  </tbody></table>`;
+}
+
+// ════════════════════════════════
+// PORTFOLIO TRACKER
+// ════════════════════════════════
+function addPosition() {
+  const ticker=$('ptf-ticker').value||'—',tipo=$('ptf-tipo').value;
+  const monto=+$('ptf-monto').value||0,precio=+$('ptf-precio').value||0;
+  if(!monto) return;
+  STATE.positions.push({id:Date.now(),ticker,tipo,monto,precio,fechaCompra:new Date().toISOString().slice(0,10)});
+  save();renderPortfolio();
+  ['ptf-ticker','ptf-monto','ptf-precio'].forEach(id=>{const e=$(id);if(e)e.value='';});
+}
+
+function removePosition(id){STATE.positions=STATE.positions.filter(p=>p.id!==id);save();renderPortfolio();}
+
+function renderPortfolio() {
+  if(!STATE.positions.length){$('ptfList').innerHTML='<div class="text-sm text-muted">Agregá tu primera posición.</div>';return;}
+  const total=STATE.positions.reduce((a,p)=>a+p.monto,0);
+  $('ptfTotal').textContent=fmt(total);$('ptfPnL').textContent='—';
+  $('ptfList').innerHTML=`<table class="tbl"><thead><tr>
+    <th>Ticker</th><th>Tipo</th><th>Monto</th><th>Fecha</th><th>% Portfolio</th><th></th></tr></thead><tbody>
+    ${STATE.positions.map(p=>`<tr>
+      <td class="mono gold">${p.ticker}</td>
+      <td><span class="badge ${p.tipo==='cedear'?'b-bl':p.tipo==='accion'?'b-au':p.tipo==='pf'?'b-lo':p.tipo==='mep'?'b-me':'b-pu'}">${p.tipo}</span></td>
+      <td class="mono">${fmt(p.monto)}</td>
+      <td class="mono text-muted">${p.fechaCompra}</td>
+      <td class="mono">${(p.monto/total*100).toFixed(1)}%</td>
+      <td><button class="btn btn-d btn-sm" onclick="removePosition(${p.id})">✕</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+  // Donut por tipo
+  const byType={};
+  STATE.positions.forEach(p=>{byType[p.tipo]=(byType[p.tipo]||0)+p.monto;});
+  const colors={'cedear':'rgba(58,110,190,.7)','accion':'rgba(196,162,78,.7)','pf':'rgba(62,158,106,.7)','mep':'rgba(62,158,106,.5)','cripto':'rgba(184,64,64,.7)','otro':'rgba(110,103,96,.7)'};
+  if(charts['chartPtfDist']) charts['chartPtfDist'].destroy();
+  const ctx=$('chartPtfDist');
+  if(ctx) charts['chartPtfDist']=new Chart(ctx,{type:'doughnut',data:{
+    labels:Object.keys(byType),
+    datasets:[{data:Object.values(byType).map(v=>Math.round(v)),backgroundColor:Object.keys(byType).map(k=>colors[k]||'rgba(110,103,96,.7)'),borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{color:'#6E6760',font:{size:9},boxWidth:10,padding:8}}}}});
+}
+
+// ════════════════════════════════
+// MERCADERÍA
+// ════════════════════════════════
+function calcMerc() {
+  const monto=+$('mc-monto').value||0,aumento=+$('mc-aumento').value||0;
+  const stock=+$('mc-stock').value||0,margen=+$('mc-margen').value||60;
+  const disp=$('mc-disp').value,vs=$('mc-vs').value;
+  if(!monto) return;
+  const tasas={pf27:0.27/12,lecap:0.30/12,uva:0.022};
+  const tasa=tasas[vs]||0.27/12;
+  const nombres={pf27:'Plazo Fijo 27%',lecap:'Lecap 30%',uva:'PF UVA'};
+  const ganFinanciero=monto*tasa;
+  const ganMercaderia=monto*(aumento/100)*(margen/100);
+  const diff=ganMercaderia-ganFinanciero;
+  const conviene=ganMercaderia>ganFinanciero&&stock<45&&disp==='si';
+  $('mcVeredicto').innerHTML=`<div class="eyebrow mb2">Veredicto</div>
+    <div class="alert ${conviene?'al-s':'al-d'}">
+      <strong>${conviene?'✓ CONVIENE COMPRAR':'✗ NO CONVIENE COMPRAR'}</strong><br>
+      ${conviene?`Adelantar compra genera ${fmt(ganMercaderia)} vs. ${fmt(ganFinanciero)} del ${nombres[vs]}. Ganás ${fmt(diff)} más comprando.`
+      :disp==='no'?'Financiarte para comprar stock a tasas de tarjeta (~180% TNA) destruye capital.'
+      :stock>=45?`Ya tenés ${stock} días de stock. No inmovilices más — dejá el dinero en ${nombres[vs]}.`
+      :`${nombres[vs]} (${fmt(ganFinanciero)}/mes) supera lo que ganás comprando (${fmt(ganMercaderia)}/mes).`}
+    </div>`;
+  $('mcAnalisisContent').innerHTML=`
+    <div class="prow"><span class="pkey">Monto</span><span class="pval gold">${fmt(monto)}</span></div>
+    <div class="prow"><span class="pkey">Ganancia comprando</span><span class="pval ${ganMercaderia>ganFinanciero?'green':'red'}">${fmt(ganMercaderia)}/mes</span></div>
+    <div class="prow"><span class="pkey">Ganancia ${nombres[vs]}</span><span class="pval ${ganFinanciero>ganMercaderia?'green':'red'}">${fmt(ganFinanciero)}/mes</span></div>
+    <div class="prow total"><span class="pkey bold">Diferencia</span><span class="pval bold ${diff>0?'green':'red'}">${fmt(diff)}</span></div>
+    <div class="prow"><span class="pkey">Stock actual</span><span class="pval ${stock>45?'red':'green'}">${stock} días ${stock>45?'(exceso)':'(OK)'}</span></div>
+    <div class="prow"><span class="pkey">Capital propio</span><span class="pval ${disp==='si'?'green':'red'}">${disp==='si'?'✓ SÍ':'✗ NO'}</span></div>`;
+  if(charts['chartMerc']) charts['chartMerc'].destroy();
+  const ctx=$('chartMerc');
+  if(ctx) charts['chartMerc']=new Chart(ctx,{type:'bar',data:{
+    labels:['Comprar mercadería',''+nombres[vs]],
+    datasets:[{data:[ganMercaderia,ganFinanciero],backgroundColor:['rgba(62,158,106,.7)','rgba(196,162,78,.7)'],borderRadius:3,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{color:'#554E42'}},y:{grid:{color:'rgba(196,162,78,.07)'},ticks:{color:'#554E42',callback:v=>fmt(v)}}}}});
+}
+
+// ════════════════════════════════
+// RENTABILIDAD
+// ════════════════════════════════
+function calcRent() {
+  const ventas=+$('r-ventas').value||0,cmv=+$('r-cmv').value||0;
+  const alq=+$('r-alq').value||0,sued=+$('r-sued').value||0;
+  const serv=+$('r-serv').value||0,retiro=+$('r-retiro').value||0;
+  const infl=(+$('r-infl').value||2.2)/100;
+  if(!ventas) return;
+  const gb=ventas-cmv,mb=gb/ventas;
+  const gf=alq+sued+serv+retiro,gn=gb-gf,mn=gn/ventas;
+  const ptoEq=gf>0?gf/mb:0;
+  let score=0;
+  if(mb>=.45)score+=2;else if(mb>=.30)score+=1;
+  if(mn>=.15)score+=2;else if(mn>=.05)score+=1;
+  if(gn>=0)score+=2;
+  if(ventas>=ptoEq*1.2)score+=2;
+  if(retiro===0)score+=1;
+  const scoreColor=score>=7?'var(--gr)':score>=4?'var(--am)':'var(--cr)';
+  $('rentScore').innerHTML=`<div style="font-family:var(--serif);font-size:2rem;font-weight:700;color:${scoreColor}">${score}/9</div>
+    <div class="text-xs text-muted">${score>=7?'Rentable':score>=4?'Ajustado':'En riesgo'}</div>`;
+  $('rentNeta').textContent=fmt(gn);$('rentNeta').style.color=gn>=0?'var(--gr)':'var(--cr)';
+  $('rentPnl').innerHTML=`
+    <div class="prow"><span class="pkey bold">Ventas</span><span class="pval gold bold">${fmt(ventas)}</span></div>
+    <div class="prow"><span class="pkey indent">− Costo mercadería</span><span class="pval red">−${fmt(cmv)}</span></div>
+    <div class="prow"><span class="pkey bold">= Ganancia Bruta (${pctAbs(mb)})</span><span class="pval ${mb>=.35?'green':'amber'} bold">${fmt(gb)}</span></div>
+    <div class="prow"><span class="pkey indent">− Alquiler</span><span class="pval red">−${fmt(alq)}</span></div>
+    <div class="prow"><span class="pkey indent">− Sueldos</span><span class="pval red">−${fmt(sued)}</span></div>
+    <div class="prow"><span class="pkey indent">− Servicios</span><span class="pval red">−${fmt(serv)}</span></div>
+    <div class="prow"><span class="pkey indent">− Retiro dueño</span><span class="pval red">−${fmt(retiro)}</span></div>
+    <div class="prow total"><span class="pkey bold">= Ganancia Neta (${pctAbs(mn)})</span><span class="pval ${gn>=0?'green':'red'} bold">${fmt(gn)}</span></div>
+    <div class="prow"><span class="pkey text-muted" style="font-size:.7rem">Punto equilibrio</span><span class="pval text-muted" style="font-size:.7rem">${fmt(ptoEq)}/mes</span></div>`;
+  // Chart márgenes
+  if(charts['chartRent']) charts['chartRent'].destroy();
+  const ctx=$('chartRent');
+  if(ctx) charts['chartRent']=new Chart(ctx,{type:'doughnut',data:{
+    labels:['CMV','Gastos Fijos','Ganancia Neta'],
+    datasets:[{data:[cmv,gf,Math.max(0,gn)],backgroundColor:['rgba(184,64,64,.7)','rgba(184,120,40,.7)','rgba(62,158,106,.7)'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{color:'#6E6760',font:{size:9},boxWidth:10,padding:8}}}}});
+  let diag='';
+  if(gn<0) diag=`<div class="alert al-d">Pérdida de ${fmt(Math.abs(gn))}/mes. Necesitás ${fmt(ptoEq-ventas)} más de ventas o reducir ${fmt(-gn)} en costos.</div>`;
+  else if(mb<.35) diag=`<div class="alert al-w">Margen bruto bajo (${pctAbs(mb)}). Para indumentaria premium, el objetivo es 45-65%.</div>`;
+  else if(retiro===0&&gn>0) diag=`<div class="alert al-s">✓ Con retiro $0, el local genera ${fmt(gn*12)}/año para reinvertir en Casa Woden.</div>`;
+  else diag=`<div class="alert al-s">✓ Negocio rentable. Margen neto ${pctAbs(mn)}. Escalá ventas manteniendo costos fijos.</div>`;
+  $('rentDiag').innerHTML=diag;
+}
+
+// ════════════════════════════════
+// CRIPTO CALCULADORA
+// ════════════════════════════════
+function calcCripto() {
+  const qty=+$('criptoCalcQty').value||0,moneda=$('criptoCalcMoneda').value;
+  const el=$('criptoCalcResult');
+  if(!qty||!el) return;
+  const precios={btc:MKT.btc?.usd||85000,eth:MKT.eth?.usd||3000,usdt:1};
+  const usd=qty*precios[moneda];
+  const ars=usd*(MKT.mep||1048);
+  el.innerHTML=`<div class="prow"><span class="pkey">En USD</span><span class="pval gold">${fmtUSD(usd)}</span></div>
+    <div class="prow"><span class="pkey">En ARS (MEP)</span><span class="pval gold">${fmt(ars)}</span></div>`;
+}
+
+// ════════════════════════════════
+// AI CHAT
+// ════════════════════════════════
+function getAICtx() {
+  const p=STATE.profile,ing=pIng(),gas=pGas();
+  const {mep,blue,oficial,btc,pfTasa} = MKT;
+  return `SISTEMA: Sos el Director de Estrategia Financiera de Casa Woden. Mentor de alto nivel. Directo, sin relleno.
+
+NEGOCIO: Casa Woden — Indumentaria masculina premium + relojes automáticos. Bahía Blanca, Argentina.
+Contexto: boom económico por Vaca Muerta. Cliente ideal: ejecutivos energéticos, ingenieros senior, abogados corporativos.
+Inventario: ~${fmt(p.inventario||9000000)} en stock. Picos probados: $4.1M en Día del Padre/Navidad.
+
+DATOS FINANCIEROS:
+- Ingresos: ${fmt(ing)} (sueldo ${fmt(p.sueldo||0)} + local ${fmt(p.local||0)})
+- Gastos fijos: ${fmt(gas)}
+- Deuda tarjetas: ${fmt(p.deuda||1000000)}
+- Ahorros: ${fmt(p.ahpesos||0)} pesos + USD ${p.ahusd||0}
+- Objetivo: ${p.objetivo||'salir de deudas'} · Riesgo: ${p.riesgo||'moderado'}
+
+MERCADO LIVE:
+- Dólar MEP: ${mep?'$'+mep.toLocaleString('es-AR'):'~$1048'}
+- Blue: ${blue?'$'+blue.toLocaleString('es-AR'):'~$1085'}
+- BTC: ${btc?fmtUSD(btc.usd):'—'}
+- PF mejor tasa: ${pfTasa?pfTasa.toFixed(1):'~27'}% TNA (dato live)
+- Inflación est.: ~2.2%/mes
+
+ESTRATEGIA: Trabajo externo (~$1M/mes) financia la vida personal → Casa Woden reinvierte todo → 12 meses para marca consolidada sin deuda.
+
+REGLAS: Nunca decís "ropa" (decís "piezas"), nunca "local" (decís "showroom"), nunca "descuento" (decís "acceso exclusivo"). Respondés en máximo 350 palabras con estrategia accionable y números reales.`;
+}
+
+function updateAICtx() {
+  const p=STATE.profile,ing=pIng(),gas=pGas();
+  const el=$('aiCtxBar');
+  if(el&&ing>0) el.innerHTML=`📍 Casa Woden · Bahía Blanca · Vaca Muerta boom<br>💰 Ingresos: ${fmt(ing)} · Gastos: ${fmt(gas)} · Deuda: ${fmt(p.deuda||1000000)} · Inventario: ${fmt(p.inventario||9000000)}<br>🎯 Objetivo: ${p.objetivo||'salir de deudas'} · Perfil: ${p.riesgo||'moderado'}`;
+}
+
+function useChip(el){$('chatInput').value=el.textContent;$('chatInput').focus();}
+
+async function sendChat() {
+  const input=$('chatInput').value.trim();
+  if(!input) return;
+  $('chatInput').value='';$('chatSendBtn').disabled=true;
+  $('chatChips').style.display='none';
+  appendMsg('user',input);
+  STATE.chatHistory.push({role:'user',content:input});
+  const thinkId='t'+Date.now();appendThink(thinkId);
+  try {
+    const msgs=STATE.chatHistory.slice(-10);
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:getAICtx(),messages:msgs})});
+    const d=await res.json();
+    const text=d.content?.map(b=>b.text||'').join('')||'Sin respuesta.';
+    removeThink(thinkId);appendMsg('ai',text);
+    STATE.chatHistory.push({role:'assistant',content:text});
+    addHistorial(input);save();
+  } catch(e){removeThink(thinkId);appendMsg('ai','Error de conexión. Intentá de nuevo.');}
+  $('chatSendBtn').disabled=false;
+}
+
+function appendMsg(role,text) {
+  const wrap=$('chatMsgs');const div=document.createElement('div');
+  div.className='msg';
+  const formatted=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>').split('\n').map(l=>l.trim()?`<p>${l}</p>`:'').join('');
+  div.innerHTML=`<div class="msg-av ${role}">${role==='ai'?'W':'↑'}</div>
+    <div class="msg-body"><div class="msg-role">${role==='ai'?'Asesor Woden Capital':'Vos'}</div>
+    <div class="msg-text">${formatted||text}</div></div>`;
+  wrap.appendChild(div);wrap.scrollTop=wrap.scrollHeight;
+}
+
+function appendThink(id){
+  const wrap=$('chatMsgs'),div=document.createElement('div');
+  div.className='msg';div.id=id;
+  div.innerHTML=`<div class="msg-av ai">W</div><div class="msg-body"><div class="msg-role">Asesor</div>
+    <div class="msg-text"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div></div>`;
+  wrap.appendChild(div);wrap.scrollTop=wrap.scrollHeight;
+}
+
+function removeThink(id){$(id)?.remove();}
+
+function addHistorial(q) {
+  const h=$('aiHistorial');if(!h)return;
+  const chip=document.createElement('div');chip.className='chip';chip.style.marginBottom='.35rem';chip.style.display='block';
+  chip.textContent=q.length>45?q.slice(0,45)+'…':q;chip.onclick=()=>useChip(chip);
+  if(h.textContent.includes('Tus consultas')) h.innerHTML='';
+  h.insertBefore(chip,h.firstChild);
+  if(h.querySelectorAll('.chip').length>5) h.lastChild?.remove();
+}
+
+function restoreChat(){
+  if(STATE.chatHistory.length) STATE.chatHistory.forEach(m=>{if(m.role!=='system')appendMsg(m.role,m.content);});
+}
+
+// ════════════════════════════════
+// EXPORT CSV
+// ════════════════════════════════
+function exportCSV() {
+  const rows=[['Fecha','Tipo','Nombre','Valor'],
+    ...STATE.patrimonyHistory.map(s=>[s.fecha,'Patrimonio','Neto',s.neto]),
+    ...STATE.debts.map(d=>['—','Deuda',d.nombre,d.total]),
+    ...STATE.positions.map(p=>[p.fechaCompra,'Inversión',p.ticker,p.monto])];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='woden-capital-datos.csv';a.click();
+}
+
+// ════════════════════════════════
+// INIT
+// ════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  load();
+  initDate();
+  loadProfile();
+  calcHealth();
+  renderDashboard();
+  renderDeudas();
+  renderPortfolio();
+  renderPatrimony();
+  restoreChat();
+  await refreshAll();
+  setInterval(refreshAll, 5*60*1000);
+  setInterval(initDate, 60*1000);
+});
+</script>
+</body>
+</html>
